@@ -1,0 +1,6 @@
+projectKey=base
+serverUrl=http://localhost:9010
+serverVersion=9.9.0.65466
+dashboardUrl=http://localhost:9010/dashboard?id=base
+ceTaskId=AYq9gTvCVZQtgxYj7COQ
+ceTaskUrl=http://localhost:9010/api/ce/task?id=AYq9gTvCVZQtgxYj7COQ
