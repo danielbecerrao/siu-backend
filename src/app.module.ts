@@ -1,3 +1,4 @@
+import { ClientsModule } from './clients/clients.module';
 import { SitesModule } from './sites/sites.module';
 import { SubjectsModule } from './subjects/subjects.module';
 import { ActionsModule } from './actions/actions.module';
@@ -19,7 +20,6 @@ import { UserInterceptor } from './users/user.interceptor';
 
 @Module({
   imports: [
-    SitesModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm],
@@ -35,6 +35,7 @@ import { UserInterceptor } from './users/user.interceptor';
     }),
     AuthModule,
     CitiesModule,
+    ClientsModule,
     CountriesModule,
     RegionsModule,
     SubregionsModule,
@@ -44,6 +45,7 @@ import { UserInterceptor } from './users/user.interceptor';
     ActionsModule,
     PermissionsModule,
     RolesModule,
+    SitesModule,
   ],
   providers: [
     {

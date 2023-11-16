@@ -1,3 +1,4 @@
+import { ClientLog } from 'src/clients/entities/clientlog.entity';
 import { SiteLog } from 'src/sites/entities/sitelog.entity';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
@@ -49,6 +50,9 @@ export class User {
 
   @ManyToOne(() => Role, (role: Role) => role.users)
   public role!: Role;
+
+  @OneToMany(() => ClientLog, (clientLog: ClientLog) => clientLog.user)
+  public clientLogs!: ClientLog[];
 
   @CreateDateColumn()
   private readonly createdAt!: Date;
