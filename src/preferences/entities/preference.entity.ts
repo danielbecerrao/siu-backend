@@ -3,15 +3,13 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
-  Unique,
+  PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('preferences')
-@Unique(['username'])
 export class Preference {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   public id!: number;
 
   @Column()
