@@ -25,6 +25,8 @@ import { UsersModule } from './users/users.module';
 import { CaslModule } from './casl/casl.module';
 import { ClsModule } from 'nestjs-cls';
 import { UserInterceptor } from './users/user.interceptor';
+import { PreferencesModule } from './preferences/preferences.module';
+import { PreferencesToUsersModule } from './preferences-to-users/preferences-to-users.module';
 
 @Module({
   imports: [
@@ -62,6 +64,8 @@ import { UserInterceptor } from './users/user.interceptor';
     PermissionsModule,
     RolesModule,
     SitesModule,
+    PreferencesModule,
+    PreferencesToUsersModule,
   ],
   providers: [
     {

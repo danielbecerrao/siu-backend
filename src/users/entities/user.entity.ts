@@ -26,6 +26,8 @@ import { SubjectLog } from '../../subjects/entities/subjectlog.entity';
 import { SubregionLog } from '../../subregions/entities/subregionlog.entity';
 import { UserLog } from './userlog.entity';
 import { Client } from '../../clients/entities/client.entity';
+import { PreferenceToUserLog } from '../../preferences-to-users/entities/preference-to-userLog.entity';
+import { PreferenceLog } from 'src/preferences/entities/preferencelog.entity';
 
 @Entity('users')
 @Unique(['username'])
@@ -103,6 +105,18 @@ export class User {
     (subregionLog: SubregionLog) => subregionLog.user,
   )
   public subregionLogs!: SubregionLog[];
+
+  @OneToMany(
+    () => PreferenceLog,
+    (preferenceLogs: PreferenceLog) => preferenceLogs.user,
+  )
+  public preferenceLogs!: PreferenceLog[];
+
+  @OneToMany(
+    () => PreferenceToUserLog,
+    (preferenceToUserLog: PreferenceToUserLog) => preferenceToUserLog.user,
+  )
+  public preferenceToUserLogs!: PreferenceToUserLog[];
 
   @OneToMany(() => UserLog, (userLog: UserLog) => userLog.user)
   public userLogs!: UserLog[];
