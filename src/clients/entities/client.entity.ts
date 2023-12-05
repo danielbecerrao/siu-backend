@@ -27,6 +27,9 @@ export class Client {
   @Column()
   public secondaryColor!: string;
 
+  @Column()
+  public imageUrl!: string;
+
   @TreeParent()
   public parent?: Client | null;
 

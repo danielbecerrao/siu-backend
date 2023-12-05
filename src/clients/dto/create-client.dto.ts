@@ -10,6 +10,9 @@ export class CreateClientDto {
   @IsNotEmpty()
   public secondaryColor!: string;
 
+  @IsNotEmpty()
+  public imageUrl!: string;
+
   @IsOptional()
   public parent?: number;
 }
