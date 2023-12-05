@@ -45,10 +45,16 @@ export class UsersService {
     });
   }
 
+  public async current(user: User): Promise<User | null> {
+    return this.findOne(user.id);
+  }
+
   public async findOneByUsername(username: string): Promise<User | null> {
-    return this.userRepository.findOneBy({
-      username: username.toLowerCase(),
-    });
+    return this.userRepository
+      .createQueryBuilder('users')
+      .innerJoinAndSelect('users.client', 'client')
+      .where('users.username = :username', { username })
+      .getOneOrFail();
   }
 
   public async findOnByIdWithPermissions(id: number): Promise<User> {

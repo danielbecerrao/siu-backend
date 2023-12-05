@@ -8,9 +8,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { ConfigService } from '@nestjs/config';
 import { RefreshJwtStrategy } from './strategies/refresh-token.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthLog } from './entities/authlog.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([AuthLog]),
     UsersModule,
     PassportModule,
     JwtModule.registerAsync({

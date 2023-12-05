@@ -1,8 +1,10 @@
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Tree,
   TreeChildren,
@@ -19,6 +21,12 @@ export class Client {
   @Column()
   public name!: string;
 
+  @Column()
+  public primaryColor!: string;
+
+  @Column()
+  public secondaryColor!: string;
+
   @TreeParent()
   public parent?: Client | null;
 
@@ -33,4 +41,7 @@ export class Client {
 
   @DeleteDateColumn()
   private readonly deletedAt!: Date | null;
+
+  @OneToMany(() => User, (user: User) => user.client)
+  public users!: User[];
 }

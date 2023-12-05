@@ -28,10 +28,7 @@ export class ClientSubscriber implements EntitySubscriberInterface<Client> {
 
   public async createLog(
     type: number,
-    event:
-      | InsertEvent<Client>
-      | UpdateEvent<Client>
-      | SoftRemoveEvent<Client>,
+    event: InsertEvent<Client> | UpdateEvent<Client> | SoftRemoveEvent<Client>,
   ): Promise<void> {
     const client: DeepPartial<ClientLog> = {
       value: event.entity,

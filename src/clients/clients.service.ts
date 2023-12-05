@@ -44,11 +44,10 @@ export class ClientsService {
 
   public async findOneParent(id: number): Promise<Client | null> {
     const parent: Client | null = await this.findOne(id);
-    if (parent) {
+    if (parent)
       return this.dataSource.manager
         .getTreeRepository(Client)
         .findDescendantsTree(parent);
-    }
     return null;
   }
 

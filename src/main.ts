@@ -16,8 +16,8 @@ async function bootstrap(): Promise<void> {
   });
   app.useGlobalPipes(new ValidationPipe());
   const config: Omit<OpenAPIObject, 'paths'> = new DocumentBuilder()
-    .setTitle('Base')
-    .setDescription('project base')
+    .setTitle('SIU')
+    .setDescription('Sistema usuarios')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

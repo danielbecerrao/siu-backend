@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -7,21 +8,24 @@ import {
   Patch,
   Post,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import type { User } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { CheckPolicies } from '../common/decorators/checkPolicies.decorator';
 import type { AppAbility } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/policies.guard';
+import { GetUser } from '../common/decorators/user.decorator';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, PoliciesGuard)
 @ApiTags('Usuarios')
 @ApiBearerAuth()
+@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   public constructor(private readonly usersService: UsersService) {}
 
@@ -35,6 +39,12 @@ export class UsersController {
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'User'))
   public async findAll(): Promise<User[]> {
     return this.usersService.findAll();
+  }
+
+  @Get('current')
+  @CheckPolicies((ability: AppAbility) => ability.can('Read', 'User'))
+  public async current(@GetUser() user: User): Promise<User | null> {
+    return this.usersService.current(user);
   }
 
   @Get(':id')

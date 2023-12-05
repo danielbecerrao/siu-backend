@@ -12,4 +12,7 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   public roleId!: number;
+
+  @IsNotEmpty()
+  public clientId!: number;
 }

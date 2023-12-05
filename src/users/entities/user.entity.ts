@@ -1,5 +1,5 @@
-import { ClientLog } from 'src/clients/entities/clientlog.entity';
-import { SiteLog } from 'src/sites/entities/sitelog.entity';
+import { ClientLog } from '../../clients/entities/clientlog.entity';
+import { SiteLog } from '../../sites/entities/sitelog.entity';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../roles/entities/role.entity';
@@ -25,6 +25,7 @@ import { RoleLog } from '../../roles/entities/rolelog.entity';
 import { SubjectLog } from '../../subjects/entities/subjectlog.entity';
 import { SubregionLog } from '../../subregions/entities/subregionlog.entity';
 import { UserLog } from './userlog.entity';
+import { Client } from '../../clients/entities/client.entity';
 
 @Entity('users')
 @Unique(['username'])
@@ -39,6 +40,7 @@ export class User {
   public username!: string;
 
   @Column()
+  @Exclude()
   public salt!: string;
 
   @Column()
@@ -50,6 +52,12 @@ export class User {
 
   @ManyToOne(() => Role, (role: Role) => role.users)
   public role!: Role;
+
+  @Column()
+  public clientId!: number;
+
+  @ManyToOne(() => Client, (client: Client) => client.users)
+  public client!: Client;
 
   @OneToMany(() => ClientLog, (clientLog: ClientLog) => clientLog.user)
   public clientLogs!: ClientLog[];
@@ -115,5 +123,9 @@ export class User {
       this.password = await bcrypt.hash(this.password, salt);
       this.salt = salt;
     }
+  }
+
+  public constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
   }
 }

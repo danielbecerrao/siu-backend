@@ -19,8 +19,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       password,
     );
     if (!user) {
+      await this.authService.log(2, username.toLowerCase());
       throw new UnauthorizedException();
     }
+    await this.authService.log(1, username.toLowerCase());
     return user;
   }
 }

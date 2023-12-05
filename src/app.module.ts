@@ -1,3 +1,11 @@
+import { OptiontypesModule } from './optiontypes/optiontypes.module';
+import { OptionsModule } from './options/options.module';
+import { ProfiletypesModule } from './profiletypes/profiletypes.module';
+import { ProfilesModule } from './profiles/profiles.module';
+import { MpermissionsModule } from './mpermissions/mpermissions.module';
+import { MenutypesModule } from './menutypes/menutypes.module';
+import { LabelsModule } from './labels/labels.module';
+import { MenusModule } from './menus/menus.module';
 import { ClientsModule } from './clients/clients.module';
 import { SitesModule } from './sites/sites.module';
 import { SubjectsModule } from './subjects/subjects.module';
@@ -20,6 +28,14 @@ import { UserInterceptor } from './users/user.interceptor';
 
 @Module({
   imports: [
+    OptiontypesModule,
+    OptionsModule,
+    ProfiletypesModule,
+    ProfilesModule,
+    MpermissionsModule,
+    MenutypesModule,
+    LabelsModule,
+    MenusModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm],
