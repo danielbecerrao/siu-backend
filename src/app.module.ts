@@ -1,3 +1,4 @@
+import { IdentificationtypesModule } from './identificationtypes/identificationtypes.module';
 import { OptiontypesModule } from './optiontypes/optiontypes.module';
 import { OptionsModule } from './options/options.module';
 import { ProfiletypesModule } from './profiletypes/profiletypes.module';
@@ -30,6 +31,7 @@ import { PreferencesToUsersModule } from './preferences-to-users/preferences-to-
 
 @Module({
   imports: [
+    IdentificationtypesModule,
     OptiontypesModule,
     OptionsModule,
     ProfiletypesModule,

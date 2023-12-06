@@ -1,8 +1,3 @@
-import { ClientLog } from '../../clients/entities/clientlog.entity';
-import { SiteLog } from '../../sites/entities/sitelog.entity';
-import * as bcrypt from 'bcrypt';
-import { Exclude } from 'class-transformer';
-import { Role } from '../../roles/entities/role.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -28,6 +23,12 @@ import { UserLog } from './userlog.entity';
 import { Client } from '../../clients/entities/client.entity';
 import { PreferenceToUserLog } from '../../preferences-to-users/entities/preference-to-userLog.entity';
 import { PreferenceLog } from 'src/preferences/entities/preferencelog.entity';
+import { ClientLog } from '../../clients/entities/clientlog.entity';
+import { SiteLog } from '../../sites/entities/sitelog.entity';
+import * as bcrypt from 'bcrypt';
+import { Exclude } from 'class-transformer';
+import { Role } from '../../roles/entities/role.entity';
+import { IdentificationType } from 'src/identificationtypes/entities/identificationtype.entity';
 
 @Entity('users')
 @Unique(['username'])
@@ -36,7 +37,34 @@ export class User {
   public id!: number;
 
   @Column()
-  public name!: string;
+  public firstname!: string;
+
+  @Column()
+  public lastname!: string;
+
+  @Column()
+  public identification!: string;
+
+  @ManyToOne(
+    () => IdentificationType,
+    (identificationType: IdentificationType) => identificationType.users,
+  )
+  public identificationtype!: IdentificationType;
+
+  @Column()
+  public identificationTypeId!: number;
+
+  @Column()
+  public email!: string;
+
+  @Column()
+  public phone!: string;
+
+  @Column()
+  public profilePicture!: string;
+
+  @Column()
+  public birthdayDate!: string;
 
   @Column()
   public username!: string;

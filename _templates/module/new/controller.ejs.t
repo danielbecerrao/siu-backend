@@ -18,7 +18,7 @@ to: src/<%=h.inflection.pluralize(name.toLowerCase())%>/<%=h.inflection.pluraliz
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { <%=Names%>Service } from './<%=names%>.service';
 import { Create<%=Name%>Dto } from './dto/create-<%=name%>.dto';
 import { Update<%=Name%>Dto } from './dto/update-<%=name%>.dto';
