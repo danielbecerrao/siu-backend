@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Preference } from './entities/Preference.entity';
+import { Preference } from './entities/preference.entity';
 import type { CreatePreferenceDto } from './dto/create.preference.dto';
 import type { UpdatePreferenceDto } from './dto/update.preference.dto';
 
