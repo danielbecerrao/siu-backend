@@ -28,6 +28,7 @@ import { ClsModule } from 'nestjs-cls';
 import { UserInterceptor } from './users/user.interceptor';
 import { PreferencesModule } from './preferences/preferences.module';
 import { PreferencesToUsersModule } from './preferences-to-users/preferences-to-users.module';
+import { AddressModule } from './addresses/address.module';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { PreferencesToUsersModule } from './preferences-to-users/preferences-to-
     SitesModule,
     PreferencesModule,
     PreferencesToUsersModule,
+    AddressModule,
   ],
   providers: [
     {

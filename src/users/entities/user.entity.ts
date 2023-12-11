@@ -29,6 +29,7 @@ import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../roles/entities/role.entity';
 import { IdentificationType } from 'src/identificationtypes/entities/identificationtype.entity';
+import { AddressLog } from 'src/addresses/entities/addresslog.entity';
 
 @Entity('users')
 @Unique(['username'])
@@ -145,6 +146,9 @@ export class User {
     (preferenceToUserLog: PreferenceToUserLog) => preferenceToUserLog.user,
   )
   public preferenceToUserLogs!: PreferenceToUserLog[];
+
+  @OneToMany(() => AddressLog, (addressLog: AddressLog) => addressLog.user)
+  public addressLogs!: AddressLog[];
 
   @OneToMany(() => UserLog, (userLog: UserLog) => userLog.user)
   public userLogs!: UserLog[];
