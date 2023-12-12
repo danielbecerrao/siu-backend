@@ -11,9 +11,11 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AddressService } from './address.service';
+import { AddressTypeService } from './addressType.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import type { Address } from './entities/address.entity';
+import type { AddressType } from 'src/addresses/entities/types.entity';
 import { CheckPolicies } from '../common/decorators/checkPolicies.decorator';
 import type { AppAbility } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/policies.guard';
@@ -23,7 +25,10 @@ import { PoliciesGuard } from '../casl/policies.guard';
 @ApiTags('Direcciones')
 @ApiBearerAuth()
 export class AddressController {
-  public constructor(private readonly addressService: AddressService) {}
+  public constructor(
+    private readonly addressService: AddressService,
+    private readonly addressTypeservice: AddressTypeService,
+  ) {}
 
   @Post()
   @CheckPolicies((ability: AppAbility) => ability.can('Create', 'Address'))
@@ -39,11 +44,11 @@ export class AddressController {
     return this.addressService.findAll();
   }
 
-  // @Get()
-  // @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Address'))
-  // public async findTypes(): Promise<Address[]> {
-  //   return this.addressService.findAll();
-  // }
+  @Get('types')
+  @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Address'))
+  public async findTypes(): Promise<AddressType[]> {
+    return this.addressTypeservice.findAll();
+  }
 
   @Get(':id')
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Address'))

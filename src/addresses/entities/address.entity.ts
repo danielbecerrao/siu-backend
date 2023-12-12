@@ -1,11 +1,10 @@
-import { User } from 'src/users/entities/user.entity';
 import { AddressType } from './types.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -14,6 +13,15 @@ import {
 export class Address {
   @PrimaryGeneratedColumn()
   public id!: number;
+
+  @Column()
+  public addressTypeId!: number;
+
+  @ManyToOne(
+    () => AddressType,
+    (addressType: AddressType) => addressType.addresses,
+  )
+  public addressType!: AddressType;
 
   @Column()
   public name!: string;
@@ -26,10 +34,4 @@ export class Address {
 
   @DeleteDateColumn()
   private readonly deletedAt!: Date | null;
-
-  @OneToMany(() => User, (user: User) => user.id)
-  public users!: User[];
-
-  @OneToMany(() => AddressType, (addressType: AddressType) => addressType.id)
-  public addressTypes!: AddressType[];
 }

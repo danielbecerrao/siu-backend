@@ -1,3 +1,4 @@
+import { Address } from './address.entity';
 import {
   Column,
   CreateDateColumn,
@@ -5,6 +6,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('address_types')
@@ -23,4 +25,7 @@ export class AddressType {
 
   @DeleteDateColumn()
   private readonly deletedAt!: Date | null;
+
+  @OneToMany(() => Address, (address: Address) => address.addressType)
+  public addresses!: Address[];
 }

@@ -29,18 +29,12 @@ export class AddressService {
   }
 
   public async findAll(): Promise<Address[]> {
-    return this.dataSource.manager.getTreeRepository(Address).findTrees();
+    return this.addressRepository.find({ relations: ['addressType'] });
   }
 
   public async findOne(id: number): Promise<Address | null> {
     return this.addressRepository.findOneBy({ id });
   }
-
-  // public async findTypes(): Promise<Address | null> {
-  //   const type = await this.addressRepository.find;
-
-  //   return type;
-  // }
 
   public async update(
     id: number,
@@ -53,7 +47,8 @@ export class AddressService {
         description: 'Dirección no encontrada por id',
       });
     try {
-      return this.dataSource.manager.save(
+      console.log(address, updateAddressDto);
+      return this.addressRepository.save(
         Object.assign(address, updateAddressDto),
       );
     } catch (error) {

@@ -2,10 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateAddressDto {
   @IsNotEmpty()
-  public userId!: number;
-
-  @IsNotEmpty()
-  public typeId!: number;
+  public addressTypeId!: number;
 
   @IsNotEmpty()
   public name!: string;
