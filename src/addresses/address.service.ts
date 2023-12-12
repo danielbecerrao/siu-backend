@@ -3,6 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { FilterOperator, FilterSuffix, paginate } from 'nestjs-paginate';
+import type { Paginated, PaginateQuery } from 'nestjs-paginate';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import type { CreateAddressDto } from './dto/create-address.dto';
@@ -28,8 +30,19 @@ export class AddressService {
     }
   }
 
-  public async findAll(): Promise<Address[]> {
-    return this.addressRepository.find({ relations: ['addressType'] });
+  public async findAll(query: PaginateQuery): Promise<Paginated<Address>> {
+    return paginate(query, this.addressRepository, {
+      sortableColumns: ['id', 'addressType.name', 'description', 'createdAt'],
+      nullSort: 'last',
+      defaultSortBy: [['id', 'ASC']],
+      searchableColumns: ['addressType.name', 'description', 'createdAt'],
+      relations: ['addressType'],
+      select: ['id', 'description', 'addressType.name', 'createdAt'],
+      filterableColumns: {
+        name: [FilterOperator.EQ, FilterSuffix.NOT],
+        age: true,
+      },
+    });
   }
 
   public async findOne(id: number): Promise<Address | null> {
@@ -47,7 +60,6 @@ export class AddressService {
         description: 'Dirección no encontrada por id',
       });
     try {
-      console.log(address, updateAddressDto);
       return this.addressRepository.save(
         Object.assign(address, updateAddressDto),
       );

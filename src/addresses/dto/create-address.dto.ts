@@ -5,5 +5,5 @@ export class CreateAddressDto {
   public addressTypeId!: number;
 
   @IsNotEmpty()
-  public name!: string;
+  public description!: string;
 }

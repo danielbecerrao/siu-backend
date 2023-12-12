@@ -8,6 +8,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import type { PaginateConfig } from 'nestjs-paginate';
+import { FilterOperator } from 'nestjs-paginate';
 
 @Entity('addresses')
 export class Address {
@@ -23,11 +25,11 @@ export class Address {
   )
   public addressType!: AddressType;
 
-  @Column()
-  public name!: string;
+  @Column({ type: 'text' })
+  public description!: string;
 
   @CreateDateColumn()
-  private readonly createdAt!: Date;
+  public createdAt!: Date;
 
   @UpdateDateColumn()
   private readonly updatedAt!: Date;
@@ -35,3 +37,12 @@ export class Address {
   @DeleteDateColumn()
   private readonly deletedAt!: Date | null;
 }
+
+export const config: PaginateConfig<Address> = {
+  loadEagerRelations: true,
+  sortableColumns: ['id', 'description', 'addressType.name'],
+  relations: ['addressType'],
+  filterableColumns: {
+    'addressType.name': [FilterOperator.IN],
+  },
+};

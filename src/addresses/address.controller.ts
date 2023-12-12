@@ -8,6 +8,8 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { Paginate, PaginateQuery } from 'nestjs-paginate';
+import type { Paginated } from 'nestjs-paginate';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AddressService } from './address.service';
@@ -40,8 +42,10 @@ export class AddressController {
 
   @Get()
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Address'))
-  public async findAll(): Promise<Address[]> {
-    return this.addressService.findAll();
+  public async findAll(
+    @Paginate() query: PaginateQuery,
+  ): Promise<Paginated<Address>> {
+    return this.addressService.findAll(query);
   }
 
   @Get('types')
