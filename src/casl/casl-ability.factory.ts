@@ -17,7 +17,6 @@ export class CaslAbilityFactory {
     authUser.role.permissions.forEach((permission) => {
       can(permission.action.name, permission.subject.name);
     });
-
     return build({
       detectSubjectType: (item: User | string) =>
         item.constructor as unknown as ExtractSubjectType<string>,

@@ -62,6 +62,16 @@ export class UsersController {
     return this.usersService.update(+id, updateUserDto);
   }
 
+  @Patch('self/:id')
+  @CheckPolicies((ability: AppAbility) => ability.can('Update', 'User'))
+  public async selfUpdate(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @GetUser() user: User,
+  ): Promise<User> {
+    return this.usersService.selfUpdate(+id, updateUserDto, user);
+  }
+
   @Delete(':id')
   @CheckPolicies((ability: AppAbility) => ability.can('Delete', 'User'))
   public async remove(@Param('id') id: string): Promise<User> {

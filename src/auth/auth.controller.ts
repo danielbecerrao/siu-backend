@@ -7,6 +7,7 @@ import { AuthDto } from './dto/auth.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RefreshJwtAuthGuard } from './guards/refresh-jwt-auth.guard';
 import type { AccessToken } from './interfaces/access-token.interface';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 @ApiTags('Autenticación')
@@ -24,5 +25,11 @@ export class AuthController {
   @Post('refresh')
   public async refreshToken(@GetUser() user: User): Promise<AccessToken> {
     return this.authService.refreshToken(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('validate')
+  public async validateToken(): Promise<boolean> {
+    return true;
   }
 }
