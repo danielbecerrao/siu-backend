@@ -19,7 +19,6 @@ import type { AppAbility } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/policies.guard';
 
 @Controller('identificationtypes')
-@UseGuards(JwtAuthGuard, PoliciesGuard)
 @ApiTags('Tipos de identificación')
 @ApiBearerAuth()
 export class IdentificationtypesController {
@@ -28,6 +27,7 @@ export class IdentificationtypesController {
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
     ability.can('Create', 'IdentificationType'),
   )
@@ -38,14 +38,12 @@ export class IdentificationtypesController {
   }
 
   @Get()
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can('Read', 'IdentificationType'),
-  )
   public async findAll(): Promise<IdentificationType[]> {
     return this.identificationtypesService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
     ability.can('Read', 'IdentificationType'),
   )
@@ -56,6 +54,7 @@ export class IdentificationtypesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
     ability.can('Update', 'IdentificationType'),
   )
@@ -70,6 +69,7 @@ export class IdentificationtypesController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
     ability.can('Delete', 'IdentificationType'),
   )
