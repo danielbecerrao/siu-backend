@@ -20,12 +20,12 @@ import { PoliciesGuard } from '../casl/policies.guard';
 
 @Controller('clients')
 @ApiTags('Clientes')
-@ApiBearerAuth()
 export class ClientsController {
   public constructor(private readonly clientsService: ClientsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Create', 'Client'))
   public async create(
     @Body() createClientDto: CreateClientDto,
@@ -40,6 +40,7 @@ export class ClientsController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Client'))
   public async findOne(@Param('id') id: string): Promise<Client | null> {
     return this.clientsService.findOneParent(+id);
@@ -47,6 +48,7 @@ export class ClientsController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Update', 'Client'))
   public async update(
     @Param('id') id: string,
@@ -57,6 +59,7 @@ export class ClientsController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Delete', 'Client'))
   public async remove(@Param('id') id: string): Promise<Client> {
     return this.clientsService.remove(+id);

@@ -20,40 +20,56 @@ import { CheckPolicies } from '../common/decorators/checkPolicies.decorator';
 import type { AppAbility } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/policies.guard';
 import { GetUser } from '../common/decorators/user.decorator';
+import { RegisterUserDto } from './dto/register-user.dto';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard, PoliciesGuard)
 @ApiTags('Usuarios')
-@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   public constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Create', 'User'))
   public async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createUserDto);
   }
 
+  @Post('register')
+  public async register(
+    @Body() registerUserDto: RegisterUserDto,
+  ): Promise<User> {
+    return this.usersService.register(registerUserDto);
+  }
+
   @Get()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'User'))
   public async findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
   @Get('current')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'User'))
   public async current(@GetUser() user: User): Promise<User | null> {
     return this.usersService.current(user);
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'User'))
   public async findOne(@Param('id') id: string): Promise<User | null> {
     return this.usersService.findOne(+id);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Update', 'User'))
   public async update(
     @Param('id') id: string,
@@ -63,6 +79,8 @@ export class UsersController {
   }
 
   @Patch('self/:id')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Update', 'User'))
   public async selfUpdate(
     @Param('id') id: string,
@@ -73,6 +91,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Delete', 'User'))
   public async remove(@Param('id') id: string): Promise<User> {
     return this.usersService.remove(+id);

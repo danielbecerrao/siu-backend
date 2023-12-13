@@ -20,7 +20,6 @@ import { PoliciesGuard } from '../casl/policies.guard';
 
 @Controller('identificationtypes')
 @ApiTags('Tipos de identificación')
-@ApiBearerAuth()
 export class IdentificationtypesController {
   public constructor(
     private readonly identificationtypesService: IdentificationtypesService,
@@ -28,6 +27,7 @@ export class IdentificationtypesController {
 
   @Post()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) =>
     ability.can('Create', 'IdentificationType'),
   )
@@ -44,6 +44,7 @@ export class IdentificationtypesController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) =>
     ability.can('Read', 'IdentificationType'),
   )
@@ -55,6 +56,7 @@ export class IdentificationtypesController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) =>
     ability.can('Update', 'IdentificationType'),
   )
@@ -70,6 +72,7 @@ export class IdentificationtypesController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) =>
     ability.can('Delete', 'IdentificationType'),
   )
