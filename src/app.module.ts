@@ -29,6 +29,11 @@ import { UserInterceptor } from './users/user.interceptor';
 import { PreferencesModule } from './preferences/preferences.module';
 import { PreferencesToUsersModule } from './preferences-to-users/preferences-to-users.module';
 import { AddressModule } from './addresses/address.module';
+import { NewsModule } from './news/news.module';
+import { NewsCategoriesModule } from './news_categories/news_categories.module';
+import { NewsImagesModule } from './news_images/news_images.module';
+import { FilesModule } from './files/files.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -70,6 +75,11 @@ import { AddressModule } from './addresses/address.module';
     PreferencesModule,
     PreferencesToUsersModule,
     AddressModule,
+    NewsModule,
+    NewsCategoriesModule,
+    NewsImagesModule,
+    FilesModule,
+    CommentsModule,
   ],
   providers: [
     {

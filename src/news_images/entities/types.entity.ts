@@ -1,24 +1,24 @@
-import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { NewsImage } from './news_images.entity';
 
-@Entity('identificationtypes')
-export class IdentificationType {
+@Entity('news_image_types')
+export class NewsImageType {
   @PrimaryGeneratedColumn()
   public id!: number;
 
   @Column()
   public name!: string;
 
-  @Column()
-  public abbreviation!: string;
+  @Column({ type: 'text' })
+  public description!: string;
 
   @CreateDateColumn()
   private readonly createdAt!: Date;
@@ -29,6 +29,9 @@ export class IdentificationType {
   @DeleteDateColumn()
   private readonly deletedAt!: Date | null;
 
-  @OneToMany(() => User, (user: User) => user.identificationtype)
-  public users!: User[];
+  @OneToMany(
+    () => NewsImage,
+    (newsImage: NewsImage) => newsImage.newsImageTypes,
+  )
+  public newsImages!: NewsImage[];
 }
