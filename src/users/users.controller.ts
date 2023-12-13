@@ -78,16 +78,15 @@ export class UsersController {
     return this.usersService.update(+id, updateUserDto);
   }
 
-  @Patch('self/:id')
+  @Patch('self')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Update', 'User'))
   public async selfUpdate(
-    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
     @GetUser() user: User,
   ): Promise<User> {
-    return this.usersService.selfUpdate(+id, updateUserDto, user);
+    return this.usersService.selfUpdate(updateUserDto, user);
   }
 
   @Delete(':id')

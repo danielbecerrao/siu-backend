@@ -86,22 +86,10 @@ export class UsersService {
     }
   }
   public async selfUpdate(
-    id: number,
     updateUserDto: UpdateUserDto,
     user: User,
   ): Promise<User> {
-    const existUser: User | null = await this.findOne(id);
-    if (!existUser)
-      throw new NotFoundException('Error al actualizar el usuario', {
-        cause: new Error(),
-        description: 'Usuario no encontrado por id',
-      });
-    if (existUser.id !== user.id)
-      throw new BadRequestException('Error al actualizar el usuario', {
-        cause: new Error(),
-        description: 'No puedes actualizar un usuario que no sea el tuyo',
-      });
-    return this.update(id, updateUserDto);
+    return this.update(user.id, updateUserDto);
   }
 
   public async register(registerUsterDto: RegisterUserDto): Promise<User> {
