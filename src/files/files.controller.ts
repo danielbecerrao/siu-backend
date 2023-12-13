@@ -139,7 +139,6 @@ export class FilesController {
       newsId: data.newsId,
       name: data.name,
       description: data.description,
-      url: keyFile,
       filepath: file.originalname,
       format: file.mimetype,
       file: '',

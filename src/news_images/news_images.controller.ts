@@ -149,7 +149,6 @@ export class NewsImagesController {
       newsImageTypesId: data.newsImageTypeId,
       name: data.name,
       description: data.description,
-      url: keyFile,
       filepath: file.originalname,
       format: file.mimetype,
       image: '',
