@@ -164,7 +164,7 @@ export class User {
   @BeforeInsert()
   @BeforeUpdate()
   public async hashPassword(): Promise<void> {
-    if (this.password) {
+    if (this.password && this.password.length > 0) {
       const salt = await bcrypt.genSalt();
       this.password = await bcrypt.hash(this.password, salt);
       this.salt = salt;

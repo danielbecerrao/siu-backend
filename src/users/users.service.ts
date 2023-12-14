@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import type { CreateUserDto } from './dto/create-user.dto';
 import type { UpdateUserDto } from './dto/update-user.dto';
+import type { RegisterUserDto } from './dto/register-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -75,16 +76,8 @@ export class UsersService {
         cause: new Error(),
         description: 'Usuario no encontrado por id',
       });
-    if (updateUserDto.username && updateUserDto.username !== user.username) {
-      const existUser = await this.findOneByUsername(updateUserDto.username);
-      if (existUser)
-        throw new ConflictException('Error al actualizar el usuario', {
-          cause: new Error(),
-          description: 'Ya existe un usuario con este username',
-        });
-    }
     try {
-      return await this.userRepository.save(Object.assign(user, updateUserDto));
+      return await this.userRepository.save({ id, ...updateUserDto });
     } catch (error) {
       throw new BadRequestException('Error al actualizar Usuario', {
         cause: new Error(),
@@ -92,24 +85,30 @@ export class UsersService {
       });
     }
   }
-
   public async selfUpdate(
-    id: number,
     updateUserDto: UpdateUserDto,
     user: User,
   ): Promise<User> {
-    const existUser: User | null = await this.findOne(id);
-    if (!existUser)
-      throw new NotFoundException('Error al actualizar el usuario', {
+    return this.update(user.id, updateUserDto);
+  }
+
+  public async register(registerUsterDto: RegisterUserDto): Promise<User> {
+    const existUser = await this.findOneByUsername(registerUsterDto.username);
+    if (existUser)
+      throw new ConflictException('Error al crear usuario', {
         cause: new Error(),
-        description: 'Usuario no encontrado por id',
+        description: 'Ya existe un usuario con este username',
       });
-    if (existUser.id !== user.id)
-      throw new BadRequestException('Error al actualizar el usuario', {
+    try {
+      const user: User = this.userRepository.create(registerUsterDto);
+      user.roleId = 2;
+      return await this.userRepository.save(user);
+    } catch (error) {
+      throw new BadRequestException('Error al crear Usuario', {
         cause: new Error(),
-        description: 'No puedes actualizar un usuario que no sea el tuyo',
+        description: `Ocurrió un error en el servidor: ${error}`,
       });
-    return this.update(id, updateUserDto);
+    }
   }
 
   public async remove(id: number): Promise<User> {
