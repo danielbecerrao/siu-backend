@@ -6,12 +6,14 @@ import { User } from './entities/user.entity';
 import { CaslModule } from '../casl/casl.module';
 import { UserLog } from './entities/userlog.entity';
 import { UserSubscriber } from './entities/user.subscriber';
+import { FilesModule } from 'src/files/files.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     TypeOrmModule.forFeature([UserLog]),
     forwardRef(() => CaslModule),
+    FilesModule,
   ],
   controllers: [UsersController],
   providers: [UsersService, UserSubscriber],

@@ -22,14 +22,18 @@ import { SubregionLog } from '../../subregions/entities/subregionlog.entity';
 import { UserLog } from './userlog.entity';
 import { Client } from '../../clients/entities/client.entity';
 import { PreferenceToUserLog } from '../../preferences-to-users/entities/preference-to-userLog.entity';
-import { PreferenceLog } from 'src/preferences/entities/preferencelog.entity';
+import { PreferenceLog } from '../../preferences/entities/preferencelog.entity';
 import { ClientLog } from '../../clients/entities/clientlog.entity';
 import { SiteLog } from '../../sites/entities/sitelog.entity';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../roles/entities/role.entity';
-import { IdentificationType } from 'src/identificationtypes/entities/identificationtype.entity';
-import { AddressLog } from 'src/addresses/entities/addresslog.entity';
+import { IdentificationType } from '../../identificationtypes/entities/identificationtype.entity';
+import { AddressLog } from '../../addresses/entities/addresslog.entity';
+import { NewsFileLog } from '../../newsfiles/entities/newsFilelog.entity';
+import { NewsImageLog } from '../../newsimages/entities/newsImagelog.entity';
+import { NewsCategoryLog } from '../../newscategories/entities/newsCategorylog.entity';
+import { NewsLog } from '../../news/entities/newslog.entity';
 
 @Entity('users')
 @Unique(['username'])
@@ -46,12 +50,6 @@ export class User {
   @Column()
   public identification!: string;
 
-  @ManyToOne(
-    () => IdentificationType,
-    (identificationType: IdentificationType) => identificationType.users,
-  )
-  public identificationtype!: IdentificationType;
-
   @Column()
   public identificationTypeId!: number;
 
@@ -61,7 +59,7 @@ export class User {
   @Column()
   public phone!: string;
 
-  @Column()
+  @Column({ nullable: true })
   public profilePicture!: string;
 
   @Column()
@@ -92,6 +90,30 @@ export class User {
 
   @OneToMany(() => ClientLog, (clientLog: ClientLog) => clientLog.user)
   public clientLogs!: ClientLog[];
+
+  @ManyToOne(
+    () => IdentificationType,
+    (identificationType: IdentificationType) => identificationType.users,
+  )
+  public identificationtype!: IdentificationType;
+
+  @OneToMany(() => NewsLog, (newLog: NewsLog) => newLog.user)
+  public newsLogs!: NewsLog[];
+
+  @OneToMany(() => NewsFileLog, (newsfileLog: NewsFileLog) => newsfileLog.user)
+  public newsfileLogs!: NewsFileLog[];
+
+  @OneToMany(
+    () => NewsImageLog,
+    (newsimageLog: NewsImageLog) => newsimageLog.user,
+  )
+  public newsimageLogs!: NewsImageLog[];
+
+  @OneToMany(
+    () => NewsCategoryLog,
+    (newscategoryLog: NewsCategoryLog) => newscategoryLog.user,
+  )
+  public newscategoryLogs!: NewsCategoryLog[];
 
   @CreateDateColumn()
   private readonly createdAt!: Date;

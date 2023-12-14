@@ -2,6 +2,7 @@ import type {
   DeepPartial,
   EntitySubscriberInterface,
   InsertEvent,
+  RecoverEvent,
   SoftRemoveEvent,
   UpdateEvent,
 } from 'typeorm';

@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -21,6 +22,7 @@ import type { AppAbility } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/policies.guard';
 import { GetUser } from '../common/decorators/user.decorator';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 @ApiTags('Usuarios')
@@ -31,9 +33,13 @@ export class UsersController {
   @Post()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @ApiBearerAuth()
+  @UseInterceptors(FileInterceptor('profilePicture'))
   @CheckPolicies((ability: AppAbility) => ability.can('Create', 'User'))
-  public async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.create(createUserDto);
+  public async create(
+    @Body() createUserDto: CreateUserDto,
+    @UploadedFile() profilePicture?: Express.Multer.File,
+  ): Promise<User> {
+    return this.usersService.create(createUserDto, profilePicture);
   }
 
   @Post('register')

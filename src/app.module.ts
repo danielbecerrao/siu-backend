@@ -1,3 +1,8 @@
+import { NewsFilesModule } from './newsfiles/newsFiles.module';
+import { NewsImagesModule } from './newsimages/newsImages.module';
+import { NewsCategoriesModule } from './newscategories/newsCategories.module';
+import { FilesModule } from './files/files.module';
+import { NewsModule } from './news/news.module';
 import { IdentificationtypesModule } from './identificationtypes/identificationtypes.module';
 import { OptiontypesModule } from './optiontypes/optiontypes.module';
 import { OptionsModule } from './options/options.module';
@@ -32,15 +37,6 @@ import { AddressModule } from './addresses/address.module';
 
 @Module({
   imports: [
-    IdentificationtypesModule,
-    OptiontypesModule,
-    OptionsModule,
-    ProfiletypesModule,
-    ProfilesModule,
-    MpermissionsModule,
-    MenutypesModule,
-    LabelsModule,
-    MenusModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm],
@@ -70,6 +66,20 @@ import { AddressModule } from './addresses/address.module';
     PreferencesModule,
     PreferencesToUsersModule,
     AddressModule,
+    NewsFilesModule,
+    NewsImagesModule,
+    NewsCategoriesModule,
+    FilesModule,
+    NewsModule,
+    IdentificationtypesModule,
+    OptiontypesModule,
+    OptionsModule,
+    ProfiletypesModule,
+    ProfilesModule,
+    MpermissionsModule,
+    MenutypesModule,
+    LabelsModule,
+    MenusModule,
   ],
   providers: [
     {
