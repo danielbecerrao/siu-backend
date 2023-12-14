@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { NewsFilesService } from './newsfiles.service';
+import { NewsFilesService } from './newsFiles.service';
 import { CreateNewsfileDto } from './dto/create-news-file.dto';
 import { UpdateNewsfileDto } from './dto/update-news-file.dto';
 import type { NewsFile } from './entities/newsFile.entity';
