@@ -1,23 +1,17 @@
-<<<<<<< HEAD
-=======
 import { User } from '../../users/entities/user.entity';
->>>>>>> 8b91221a13e0165eaacbcb5ab5ed12bbfa29bfee
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-<<<<<<< HEAD
-=======
   Index,
   ManyToOne,
->>>>>>> 8b91221a13e0165eaacbcb5ab5ed12bbfa29bfee
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('newslog')
-export class NewsLog {
+@Entity('newsimageslog')
+export class NewsImageLog {
   @PrimaryGeneratedColumn()
   public id!: string;
 
@@ -27,16 +21,13 @@ export class NewsLog {
   @Column()
   public type!: number;
 
-<<<<<<< HEAD
-=======
   @Column()
   public userId!: string;
 
   @Index()
-  @ManyToOne(() => User, (user: User) => user.newsLogs)
+  @ManyToOne(() => User, (user: User) => user.newsimageLogs)
   public user!: User;
 
->>>>>>> 8b91221a13e0165eaacbcb5ab5ed12bbfa29bfee
   @CreateDateColumn()
   private readonly createdAt!: Date;
 

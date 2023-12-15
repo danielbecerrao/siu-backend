@@ -1,125 +1,107 @@
-<<<<<<< HEAD
-import type { TestingModule } from '@nestjs/testing';
-import { Test } from '@nestjs/testing';
-import { NewsService } from './news.service';
-
-describe('NewsService', () => {
-  let service: NewsService;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [NewsService],
-    }).compile();
-
-    service = module.get<NewsService>(NewsService);
-=======
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NewsService } from './news.service';
-import type { CreateNewDto } from './dto/create-news.dto';
-import type { UpdateNewDto } from './dto/update-news.dto';
-import { New } from './entities/news.entity';
+import { NewsFilesService } from './newsfiles.service';
+import type { CreateNewsfileDto } from './dto/create-news-file.dto';
+import type { UpdateNewsfileDto } from './dto/update-news-file.dto';
+import { NewsFile } from './entities/newsFile.entity';
 
-describe('NewsService', () => {
-  let service: NewsService;
-  let repository: Repository<New>;
+describe('NewsfilesService', () => {
+  let service: NewsFilesService;
+  let repository: Repository<NewsFile>;
 
-  const createNewDto: CreateNewDto = {
-    name: 'Test New',
+  const createNewsfileDto: CreateNewsfileDto = {
+    name: 'Test Newsfile',
   };
-  const updateNewDto: UpdateNewDto = {
-    name: 'Test update New',
+  const updateNewsfileDto: UpdateNewsfileDto = {
+    name: 'Test update Newsfile',
   };
 
-  const news: New[] = [];
+  const newsfiles: NewsFile[] = [];
   for (let i = 1; i < 11; i++) {
-    const new: New = new New();
-    new.id = i;
-    new.name = `TestNew${i}`;
-    news.push(new);
+    const newsfile: NewsFile = new NewsFile();
+    newsfile.id = i;
+    newsfile.name = `TestNewsfile${i}`;
+    newsfiles.push(newsfile);
   }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        NewsService,
+        NewsFilesService,
         {
-          provide: getRepositoryToken(New),
+          provide: getRepositoryToken(NewsFile),
           useClass: Repository,
         },
       ],
     }).compile();
 
-    service = module.get<NewsService>(NewsService);
-    repository = module.get<Repository<New>>(getRepositoryToken(New));
->>>>>>> 8b91221a13e0165eaacbcb5ab5ed12bbfa29bfee
+    service = module.get<NewsFilesService>(NewsFilesService);
+    repository = module.get<Repository<NewsFile>>(getRepositoryToken(NewsFile));
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-<<<<<<< HEAD
-=======
 
   describe('create', () => {
-    it('should create a new', async () => {
+    it('should create a newsfile', async () => {
       const createSpy = jest
         .spyOn(repository, 'create')
-        .mockReturnValue(news[0]);
+        .mockReturnValue(newsfiles[0]);
       const saveSpy = jest
         .spyOn(repository, 'save')
-        .mockResolvedValue(news[0]);
-      const result = await service.create(createNewDto);
-      expect(createSpy).toHaveBeenCalledWith(createNewDto);
-      expect(saveSpy).toHaveBeenCalledWith(news[0]);
-      expect(result).toEqual(news[0]);
+        .mockResolvedValue(newsfiles[0]);
+      const result = await service.create(createNewsfileDto);
+      expect(createSpy).toHaveBeenCalledWith(createNewsfileDto);
+      expect(saveSpy).toHaveBeenCalledWith(newsfiles[0]);
+      expect(result).toEqual(newsfiles[0]);
     });
 
     it('should throw a BadRequestException when there is a server error during creation', async () => {
       const createSpy = jest
         .spyOn(repository, 'create')
-        .mockReturnValue(news[0]);
+        .mockReturnValue(newsfiles[0]);
       const saveSpy = jest
         .spyOn(repository, 'save')
         .mockRejectedValue(new Error('Error de servidor'));
       try {
-        await service.create(createNewDto);
+        await service.create(createNewsfileDto);
       } catch (error) {
-        expect(saveSpy).toHaveBeenCalledWith(news[0]);
+        expect(saveSpy).toHaveBeenCalledWith(newsfiles[0]);
         if (error instanceof Error) {
           expect(error).toBeInstanceOf(BadRequestException);
-          expect(error.message).toEqual(`Error al crear Noticium`);
+          expect(error.message).toEqual(`Error al crear Newsfile`);
         }
       }
-      expect(createSpy).toHaveBeenCalledWith(createNewDto);
-      expect(saveSpy).toHaveBeenCalledWith(news[0]);
+      expect(createSpy).toHaveBeenCalledWith(createNewsfileDto);
+      expect(saveSpy).toHaveBeenCalledWith(newsfiles[0]);
     });
   });
 
   describe('findAll', () => {
-    it('should return an array of News', async () => {
-      jest.spyOn(repository, 'find').mockResolvedValue(news);
+    it('should return an array of Newsfiles', async () => {
+      jest.spyOn(repository, 'find').mockResolvedValue(newsfiles);
       const result = await service.findAll();
-      expect(result).toEqual(news);
+      expect(result).toEqual(newsfiles);
     });
 
-    it('should return an empty array of News', async () => {
-      const emptyNews: New[] = [];
-      jest.spyOn(repository, 'find').mockResolvedValue(emptyNews);
+    it('should return an empty array of Newsfiles', async () => {
+      const emptyNewsfiles: NewsFile[] = [];
+      jest.spyOn(repository, 'find').mockResolvedValue(emptyNewsfiles);
       const result = await service.findAll();
-      expect(result).toEqual(emptyNews);
+      expect(result).toEqual(emptyNewsfiles);
     });
   });
 
   describe('findOne', () => {
-    it('should return a New object when a valid id is passed', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(news[0]);
+    it('should return a Newsfile object when a valid id is passed', async () => {
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(newsfiles[0]);
       const id = 1;
       const result = await service.findOne(+id);
-      expect(result).toEqual(news[0]);
+      expect(result).toEqual(newsfiles[0]);
     });
 
     it('should return null when an invalid ID is provided', async () => {
@@ -132,35 +114,35 @@ describe('NewsService', () => {
   });
 
   describe('update', () => {
-    it('should update a new', async () => {
+    it('should update a newsfile', async () => {
       const id = 1;
       const findOneSpy = jest
         .spyOn(service, 'findOne')
-        .mockResolvedValue(news[0]);
+        .mockResolvedValue(newsfiles[0]);
 
       const saveSpy = jest
         .spyOn(repository, 'save')
-        .mockResolvedValue(news[0]);
+        .mockResolvedValue(newsfiles[0]);
 
-      const result = await service.update(id, updateNewDto);
+      const result = await service.update(id, updateNewsfileDto);
 
       expect(findOneSpy).toHaveBeenCalledWith(id);
 
       expect(saveSpy).toHaveBeenCalledWith({
-        ...news[0],
-        ...updateNewDto,
+        ...newsfiles[0],
+        ...updateNewsfileDto,
       });
 
       expect(result).toEqual({
-        ...news[0],
-        ...updateNewDto,
+        ...newsfiles[0],
+        ...updateNewsfileDto,
       });
     });
 
-    it('should throw NotFoundException when new does not exist', async () => {
+    it('should throw NotFoundException when newsfile does not exist', async () => {
       const id = 12;
       const findOneSpy = jest.spyOn(service, 'findOne').mockResolvedValue(null);
-      await expect(service.update(+id, updateNewDto)).rejects.toThrowError(
+      await expect(service.update(+id, updateNewsfileDto)).rejects.toThrowError(
         NotFoundException,
       );
       expect(findOneSpy).toHaveBeenCalledWith(id);
@@ -170,39 +152,39 @@ describe('NewsService', () => {
       const id = 1;
       const findOneSpy = jest
         .spyOn(service, 'findOne')
-        .mockResolvedValue(news[0]);
+        .mockResolvedValue(newsfiles[0]);
       const saveSpy = jest
         .spyOn(repository, 'save')
         .mockRejectedValue(new Error('Error de servidor'));
       try {
-        await service.update(+id, updateNewDto);
+        await service.update(+id, updateNewsfileDto);
         fail('Service did throw BadRequestException');
       } catch (error) {
         expect(findOneSpy).toHaveBeenCalledWith(id);
 
         expect(saveSpy).toHaveBeenCalledWith({
-          ...news[0],
-          ...updateNewDto,
+          ...newsfiles[0],
+          ...updateNewsfileDto,
         });
         if (error instanceof Error) {
           expect(error).toBeInstanceOf(BadRequestException);
-          expect(error.message).toEqual(`Error al actualizar Noticium`);
+          expect(error.message).toEqual(`Error al actualizar Newsfile`);
         }
       }
     });
   });
 
   describe('remove', () => {
-    it('should remove a New when a valid ID is provided', async () => {
+    it('should remove a Newsfile when a valid ID is provided', async () => {
       const id = 1;
       const findOneSpy = jest
         .spyOn(service, 'findOne')
-        .mockResolvedValue(news[0]);
-      jest.spyOn(repository, 'softRemove').mockResolvedValue(news[0]);
+        .mockResolvedValue(newsfiles[0]);
+      jest.spyOn(repository, 'softRemove').mockResolvedValue(newsfiles[0]);
 
       const result = await service.remove(+id);
       expect(findOneSpy).toHaveBeenCalledWith(id);
-      expect(result).toEqual(news[0]);
+      expect(result).toEqual(newsfiles[0]);
     });
 
     it('should throw a NotFoundException when an invalid ID is provided', async () => {
@@ -215,7 +197,7 @@ describe('NewsService', () => {
       const id = 1;
       const findOneSpy = jest
         .spyOn(service, 'findOne')
-        .mockResolvedValue(news[0]);
+        .mockResolvedValue(newsfiles[0]);
 
       const softRemoveSpy = jest
         .spyOn(repository, 'softRemove')
@@ -227,13 +209,12 @@ describe('NewsService', () => {
       } catch (error) {
         expect(findOneSpy).toHaveBeenCalledWith(id);
 
-        expect(softRemoveSpy).toHaveBeenCalledWith(news[0]);
+        expect(softRemoveSpy).toHaveBeenCalledWith(newsfiles[0]);
         if (error instanceof Error) {
           expect(error).toBeInstanceOf(BadRequestException);
-          expect(error.message).toEqual(`Error al eliminar Noticium`);
+          expect(error.message).toEqual(`Error al eliminar Newsfile`);
         }
       }
     });
   });
->>>>>>> 8b91221a13e0165eaacbcb5ab5ed12bbfa29bfee
 });

@@ -1,125 +1,109 @@
-<<<<<<< HEAD
-import type { TestingModule } from '@nestjs/testing';
-import { Test } from '@nestjs/testing';
-import { NewsService } from './news.service';
-
-describe('NewsService', () => {
-  let service: NewsService;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [NewsService],
-    }).compile();
-
-    service = module.get<NewsService>(NewsService);
-=======
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NewsService } from './news.service';
-import type { CreateNewDto } from './dto/create-news.dto';
-import type { UpdateNewDto } from './dto/update-news.dto';
-import { New } from './entities/news.entity';
+import { NewsCategoriesService } from './newsCategories.service';
+import type { CreateNewsCategoryDto } from './dto/create-news-category.dto';
+import type { UpdateNewsCategoryDto } from './dto/update-news-category.dto';
+import { NewsCategory } from './entities/newsCategory.entity';
 
-describe('NewsService', () => {
-  let service: NewsService;
-  let repository: Repository<New>;
+describe('NewsCategoriesService', () => {
+  let service: NewsCategoriesService;
+  let repository: Repository<NewsCategory>;
 
-  const createNewDto: CreateNewDto = {
-    name: 'Test New',
+  const createNewscategoryDto: CreateNewsCategoryDto = {
+    name: 'Test Newscategory',
   };
-  const updateNewDto: UpdateNewDto = {
-    name: 'Test update New',
+  const updateNewscategoryDto: UpdateNewsCategoryDto = {
+    name: 'Test update Newscategory',
   };
 
-  const news: New[] = [];
+  const newscategories: NewsCategory[] = [];
   for (let i = 1; i < 11; i++) {
-    const new: New = new New();
-    new.id = i;
-    new.name = `TestNew${i}`;
-    news.push(new);
+    const newscategory: NewsCategory = new NewsCategory();
+    newscategory.id = i;
+    newscategory.name = `TestNewscategory${i}`;
+    newscategories.push(newscategory);
   }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        NewsService,
+        NewsCategoriesService,
         {
-          provide: getRepositoryToken(New),
+          provide: getRepositoryToken(NewsCategory),
           useClass: Repository,
         },
       ],
     }).compile();
 
-    service = module.get<NewsService>(NewsService);
-    repository = module.get<Repository<New>>(getRepositoryToken(New));
->>>>>>> 8b91221a13e0165eaacbcb5ab5ed12bbfa29bfee
+    service = module.get<NewsCategoriesService>(NewsCategoriesService);
+    repository = module.get<Repository<NewsCategory>>(
+      getRepositoryToken(NewsCategory),
+    );
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-<<<<<<< HEAD
-=======
 
   describe('create', () => {
-    it('should create a new', async () => {
+    it('should create a newscategory', async () => {
       const createSpy = jest
         .spyOn(repository, 'create')
-        .mockReturnValue(news[0]);
+        .mockReturnValue(newscategories[0]);
       const saveSpy = jest
         .spyOn(repository, 'save')
-        .mockResolvedValue(news[0]);
-      const result = await service.create(createNewDto);
-      expect(createSpy).toHaveBeenCalledWith(createNewDto);
-      expect(saveSpy).toHaveBeenCalledWith(news[0]);
-      expect(result).toEqual(news[0]);
+        .mockResolvedValue(newscategories[0]);
+      const result = await service.create(createNewscategoryDto);
+      expect(createSpy).toHaveBeenCalledWith(createNewscategoryDto);
+      expect(saveSpy).toHaveBeenCalledWith(newscategories[0]);
+      expect(result).toEqual(newscategories[0]);
     });
 
     it('should throw a BadRequestException when there is a server error during creation', async () => {
       const createSpy = jest
         .spyOn(repository, 'create')
-        .mockReturnValue(news[0]);
+        .mockReturnValue(newscategories[0]);
       const saveSpy = jest
         .spyOn(repository, 'save')
         .mockRejectedValue(new Error('Error de servidor'));
       try {
-        await service.create(createNewDto);
+        await service.create(createNewscategoryDto);
       } catch (error) {
-        expect(saveSpy).toHaveBeenCalledWith(news[0]);
+        expect(saveSpy).toHaveBeenCalledWith(newscategories[0]);
         if (error instanceof Error) {
           expect(error).toBeInstanceOf(BadRequestException);
-          expect(error.message).toEqual(`Error al crear Noticium`);
+          expect(error.message).toEqual(`Error al crear Newscategory`);
         }
       }
-      expect(createSpy).toHaveBeenCalledWith(createNewDto);
-      expect(saveSpy).toHaveBeenCalledWith(news[0]);
+      expect(createSpy).toHaveBeenCalledWith(createNewscategoryDto);
+      expect(saveSpy).toHaveBeenCalledWith(newscategories[0]);
     });
   });
 
   describe('findAll', () => {
-    it('should return an array of News', async () => {
-      jest.spyOn(repository, 'find').mockResolvedValue(news);
+    it('should return an array of Newscategories', async () => {
+      jest.spyOn(repository, 'find').mockResolvedValue(newscategories);
       const result = await service.findAll();
-      expect(result).toEqual(news);
+      expect(result).toEqual(newscategories);
     });
 
-    it('should return an empty array of News', async () => {
-      const emptyNews: New[] = [];
-      jest.spyOn(repository, 'find').mockResolvedValue(emptyNews);
+    it('should return an empty array of Newscategories', async () => {
+      const emptyNewscategories: NewsCategory[] = [];
+      jest.spyOn(repository, 'find').mockResolvedValue(emptyNewscategories);
       const result = await service.findAll();
-      expect(result).toEqual(emptyNews);
+      expect(result).toEqual(emptyNewscategories);
     });
   });
 
   describe('findOne', () => {
-    it('should return a New object when a valid id is passed', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(news[0]);
+    it('should return a Newscategory object when a valid id is passed', async () => {
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(newscategories[0]);
       const id = 1;
       const result = await service.findOne(+id);
-      expect(result).toEqual(news[0]);
+      expect(result).toEqual(newscategories[0]);
     });
 
     it('should return null when an invalid ID is provided', async () => {
@@ -132,37 +116,37 @@ describe('NewsService', () => {
   });
 
   describe('update', () => {
-    it('should update a new', async () => {
+    it('should update a newscategory', async () => {
       const id = 1;
       const findOneSpy = jest
         .spyOn(service, 'findOne')
-        .mockResolvedValue(news[0]);
+        .mockResolvedValue(newscategories[0]);
 
       const saveSpy = jest
         .spyOn(repository, 'save')
-        .mockResolvedValue(news[0]);
+        .mockResolvedValue(newscategories[0]);
 
-      const result = await service.update(id, updateNewDto);
+      const result = await service.update(id, updateNewscategoryDto);
 
       expect(findOneSpy).toHaveBeenCalledWith(id);
 
       expect(saveSpy).toHaveBeenCalledWith({
-        ...news[0],
-        ...updateNewDto,
+        ...newscategories[0],
+        ...updateNewscategoryDto,
       });
 
       expect(result).toEqual({
-        ...news[0],
-        ...updateNewDto,
+        ...newscategories[0],
+        ...updateNewscategoryDto,
       });
     });
 
-    it('should throw NotFoundException when new does not exist', async () => {
+    it('should throw NotFoundException when newscategory does not exist', async () => {
       const id = 12;
       const findOneSpy = jest.spyOn(service, 'findOne').mockResolvedValue(null);
-      await expect(service.update(+id, updateNewDto)).rejects.toThrowError(
-        NotFoundException,
-      );
+      await expect(
+        service.update(+id, updateNewscategoryDto),
+      ).rejects.toThrowError(NotFoundException);
       expect(findOneSpy).toHaveBeenCalledWith(id);
     });
 
@@ -170,39 +154,39 @@ describe('NewsService', () => {
       const id = 1;
       const findOneSpy = jest
         .spyOn(service, 'findOne')
-        .mockResolvedValue(news[0]);
+        .mockResolvedValue(newscategories[0]);
       const saveSpy = jest
         .spyOn(repository, 'save')
         .mockRejectedValue(new Error('Error de servidor'));
       try {
-        await service.update(+id, updateNewDto);
+        await service.update(+id, updateNewscategoryDto);
         fail('Service did throw BadRequestException');
       } catch (error) {
         expect(findOneSpy).toHaveBeenCalledWith(id);
 
         expect(saveSpy).toHaveBeenCalledWith({
-          ...news[0],
-          ...updateNewDto,
+          ...newscategories[0],
+          ...updateNewscategoryDto,
         });
         if (error instanceof Error) {
           expect(error).toBeInstanceOf(BadRequestException);
-          expect(error.message).toEqual(`Error al actualizar Noticium`);
+          expect(error.message).toEqual(`Error al actualizar Newscategory`);
         }
       }
     });
   });
 
   describe('remove', () => {
-    it('should remove a New when a valid ID is provided', async () => {
+    it('should remove a Newscategory when a valid ID is provided', async () => {
       const id = 1;
       const findOneSpy = jest
         .spyOn(service, 'findOne')
-        .mockResolvedValue(news[0]);
-      jest.spyOn(repository, 'softRemove').mockResolvedValue(news[0]);
+        .mockResolvedValue(newscategories[0]);
+      jest.spyOn(repository, 'softRemove').mockResolvedValue(newscategories[0]);
 
       const result = await service.remove(+id);
       expect(findOneSpy).toHaveBeenCalledWith(id);
-      expect(result).toEqual(news[0]);
+      expect(result).toEqual(newscategories[0]);
     });
 
     it('should throw a NotFoundException when an invalid ID is provided', async () => {
@@ -215,7 +199,7 @@ describe('NewsService', () => {
       const id = 1;
       const findOneSpy = jest
         .spyOn(service, 'findOne')
-        .mockResolvedValue(news[0]);
+        .mockResolvedValue(newscategories[0]);
 
       const softRemoveSpy = jest
         .spyOn(repository, 'softRemove')
@@ -227,13 +211,12 @@ describe('NewsService', () => {
       } catch (error) {
         expect(findOneSpy).toHaveBeenCalledWith(id);
 
-        expect(softRemoveSpy).toHaveBeenCalledWith(news[0]);
+        expect(softRemoveSpy).toHaveBeenCalledWith(newscategories[0]);
         if (error instanceof Error) {
           expect(error).toBeInstanceOf(BadRequestException);
-          expect(error.message).toEqual(`Error al eliminar Noticium`);
+          expect(error.message).toEqual(`Error al eliminar Newscategory`);
         }
       }
     });
   });
->>>>>>> 8b91221a13e0165eaacbcb5ab5ed12bbfa29bfee
 });

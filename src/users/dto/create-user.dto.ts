@@ -22,9 +22,6 @@ export class CreateUserDto {
   public phone!: string;
 
   @IsNotEmpty()
-  public profilePicture!: string;
-
-  @IsNotEmpty()
   public birthdayDate!: string;
 
   @IsNotEmpty()

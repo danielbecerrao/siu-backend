@@ -1,3 +1,8 @@
+import { NewsFilesModule } from './newsfiles/newsFiles.module';
+import { NewsImagesModule } from './newsimages/newsImages.module';
+import { NewsCategoriesModule } from './newscategories/newsCategories.module';
+import { FilesModule } from './files/files.module';
+import { NewsModule } from './news/news.module';
 import { IdentificationtypesModule } from './identificationtypes/identificationtypes.module';
 import { OptiontypesModule } from './optiontypes/optiontypes.module';
 import { OptionsModule } from './options/options.module';
@@ -37,15 +42,6 @@ import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
-    IdentificationtypesModule,
-    OptiontypesModule,
-    OptionsModule,
-    ProfiletypesModule,
-    ProfilesModule,
-    MpermissionsModule,
-    MenutypesModule,
-    LabelsModule,
-    MenusModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm],
@@ -75,11 +71,28 @@ import { CommentsModule } from './comments/comments.module';
     PreferencesModule,
     PreferencesToUsersModule,
     AddressModule,
+<<<<<<< HEAD
     NewsModule,
     NewsCategoriesModule,
     NewsImagesModule,
     FilesModule,
     CommentsModule,
+=======
+    NewsFilesModule,
+    NewsImagesModule,
+    NewsCategoriesModule,
+    FilesModule,
+    NewsModule,
+    IdentificationtypesModule,
+    OptiontypesModule,
+    OptionsModule,
+    ProfiletypesModule,
+    ProfilesModule,
+    MpermissionsModule,
+    MenutypesModule,
+    LabelsModule,
+    MenusModule,
+>>>>>>> 8b91221a13e0165eaacbcb5ab5ed12bbfa29bfee
   ],
   providers: [
     {

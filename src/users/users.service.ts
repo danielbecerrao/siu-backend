@@ -5,34 +5,52 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import type { CreateUserDto } from './dto/create-user.dto';
 import type { UpdateUserDto } from './dto/update-user.dto';
 import type { RegisterUserDto } from './dto/register-user.dto';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class UsersService {
   public constructor(
     @InjectRepository(User)
     public readonly userRepository: Repository<User>,
+    private readonly filesService: FilesService,
+    private readonly dataSource: DataSource,
   ) {}
 
-  public async create(createUserDto: CreateUserDto): Promise<User> {
+  public async create(
+    createUserDto: CreateUserDto,
+    profilePicture?: Express.Multer.File,
+  ): Promise<User> {
     const existUser = await this.findOneByUsername(createUserDto.username);
     if (existUser)
       throw new ConflictException('Error al crear usuario', {
         cause: new Error(),
         description: 'Ya existe un usuario con este username',
       });
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
       const user: User = this.userRepository.create(createUserDto);
-      return await this.userRepository.save(user);
+      const newUser: User = await queryRunner.manager.save(user);
+      if (profilePicture) {
+        await this.filesService.upload(profilePicture, 'img_users', newUser.id);
+        user.profilePicture = profilePicture.originalname;
+      }
+      await queryRunner.commitTransaction();
+      return newUser;
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException('Error al crear Usuario', {
         cause: new Error(),
         description: `Ocurrió un error en el servidor: ${error}`,
       });
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -41,9 +59,10 @@ export class UsersService {
   }
 
   public async findOne(id: number): Promise<User | null> {
-    return this.userRepository.findOneBy({
+    const user: User | null = await this.userRepository.findOneBy({
       id,
     });
+    return user;
   }
 
   public async current(user: User): Promise<User | null> {

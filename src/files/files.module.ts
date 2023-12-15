@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CaslModule } from '../casl/casl.module';
@@ -15,5 +16,13 @@ import { FileLog } from './entities/filelog.entity';
   ],
   controllers: [FilesController],
   providers: [FilesService, S3Service],
+=======
+import { Module } from '@nestjs/common';
+import { FilesService } from './files.service';
+
+@Module({
+  providers: [FilesService],
+  exports: [FilesService],
+>>>>>>> 8b91221a13e0165eaacbcb5ab5ed12bbfa29bfee
 })
 export class FilesModule {}
