@@ -36,8 +36,10 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
       user: this.cls.get('user'),
       type,
     };
-    const userLog: UserLog = this.userLogRepository.create(user);
-    await this.userLogRepository.save(userLog);
+    if (this.cls.get('user')) {
+      const userLog: UserLog = this.userLogRepository.create(user);
+      await this.userLogRepository.save(userLog);
+    }
   }
 
   public async afterInsert(event: InsertEvent<User>): Promise<void> {

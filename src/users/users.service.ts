@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import type { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import type { UpdateUserDto } from './dto/update-user.dto';
 import type { RegisterUserDto } from './dto/register-user.dto';
 import { FilesService } from 'src/files/files.service';
@@ -111,23 +111,14 @@ export class UsersService {
     return this.update(user.id, updateUserDto);
   }
 
-  public async register(registerUsterDto: RegisterUserDto): Promise<User> {
-    const existUser = await this.findOneByUsername(registerUsterDto.username);
-    if (existUser)
-      throw new ConflictException('Error al crear usuario', {
-        cause: new Error(),
-        description: 'Ya existe un usuario con este username',
-      });
-    try {
-      const user: User = this.userRepository.create(registerUsterDto);
-      user.roleId = 2;
-      return await this.userRepository.save(user);
-    } catch (error) {
-      throw new BadRequestException('Error al crear Usuario', {
-        cause: new Error(),
-        description: `Ocurrió un error en el servidor: ${error}`,
-      });
-    }
+  public async register(
+    registerUsterDto: RegisterUserDto,
+    profilePicture?: Express.Multer.File,
+  ): Promise<User> {
+    const createUserDto: CreateUserDto = new CreateUserDto();
+    Object.assign(createUserDto, registerUsterDto);
+    createUserDto.roleId = 2;
+    return this.create(createUserDto, profilePicture);
   }
 
   public async remove(id: number): Promise<User> {

@@ -24,7 +24,7 @@ export class UserInterceptor implements NestInterceptor {
     this.cls.set('user', user);
     return next.handle().pipe(
       map(async (data) => {
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && user) {
           for await (const user of data) {
             if (user.profilePicture)
               user.profilePictureUrl = await this.fileService.getPresignedUrl(
@@ -33,7 +33,7 @@ export class UserInterceptor implements NestInterceptor {
                 user.id,
               );
           }
-        } else if (data.profilePicture) {
+        } else if (data.profilePicture && user) {
           data.profilePictureUrl = await this.fileService.getPresignedUrl(
             'img_users',
             data.profilePicture,

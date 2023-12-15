@@ -43,10 +43,12 @@ export class UsersController {
   }
 
   @Post('register')
+  @UseInterceptors(FileInterceptor('profilePicture'))
   public async register(
     @Body() registerUserDto: RegisterUserDto,
+    @UploadedFile() profilePicture?: Express.Multer.File,
   ): Promise<User> {
-    return this.usersService.register(registerUserDto);
+    return this.usersService.register(registerUserDto, profilePicture);
   }
 
   @Get()
