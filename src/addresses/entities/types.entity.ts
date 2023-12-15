@@ -17,6 +17,9 @@ export class AddressType {
   @Column()
   public name!: string;
 
+  @Column({ type: 'text' })
+  public description!: string;
+
   @CreateDateColumn()
   private readonly createdAt!: Date;
 

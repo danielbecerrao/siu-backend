@@ -37,7 +37,14 @@ export class AddressService {
       defaultSortBy: [['id', 'ASC']],
       searchableColumns: ['addressType.name', 'description', 'createdAt'],
       relations: ['addressType'],
-      select: ['id', 'description', 'addressType.name', 'createdAt'],
+      select: [
+        'id',
+        'addressTypeId',
+        'description',
+        'addressType.name',
+        'addressType.description',
+        'createdAt',
+      ],
       filterableColumns: {
         name: [FilterOperator.EQ, FilterSuffix.NOT],
         age: true,
