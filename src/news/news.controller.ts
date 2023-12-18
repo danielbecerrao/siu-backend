@@ -43,6 +43,15 @@ export class NewsController {
     return this.newsService.findOneParent(+id);
   }
 
+  // obtener noticias por categoria
+  @Get('category/:id')
+  @CheckPolicies((ability: AppAbility) => ability.can('Read', 'New'))
+  public async findNewsByCategory(
+    @Param('id') id: string,
+  ): Promise<News[] | null> {
+    return this.newsService.findNewsByCategory(+id);
+  }
+
   @Patch(':id')
   @CheckPolicies((ability: AppAbility) => ability.can('Update', 'New'))
   public async update(

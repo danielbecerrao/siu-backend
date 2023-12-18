@@ -46,6 +46,10 @@ export class NewsService {
     return this.newRepository.findOneBy({ id });
   }
 
+  public async findNewsByCategory(id: number): Promise<News[] | null> {
+    return this.newRepository.find({ where: { newsCategoryId: id } });
+  }
+
   public async findOneParent(id: number): Promise<News | null> {
     const parent: News | null = await this.findOne(id);
     if (parent)
