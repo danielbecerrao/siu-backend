@@ -34,6 +34,7 @@ import { NewsFileLog } from '../../newsfiles/entities/newsFilelog.entity';
 import { NewsImageLog } from '../../newsimages/entities/newsImagelog.entity';
 import { NewsCategoryLog } from '../../newscategories/entities/newsCategorylog.entity';
 import { NewsLog } from '../../news/entities/newslog.entity';
+import { FareLog } from 'src/fares/entities/farelog.entity';
 
 @Entity('users')
 @Unique(['username'])
@@ -114,6 +115,9 @@ export class User {
     (newscategoryLog: NewsCategoryLog) => newscategoryLog.user,
   )
   public newscategoryLogs!: NewsCategoryLog[];
+
+  @OneToMany(() => FareLog, (fareLog: FareLog) => fareLog.user)
+  public fareLogs!: FareLog[];
 
   @CreateDateColumn()
   private readonly createdAt!: Date;
