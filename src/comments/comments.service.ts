@@ -26,7 +26,11 @@ export class CommentsService {
       comment.content = createCommentDto.content;
       comment.newsId = createCommentDto.newsId;
       comment.userId = user.id;
-      comment.parent = createCommentDto.parent;
+      let parent: Comment | null = null;
+      if (createCommentDto.parent) {
+        parent = await this.findOne(createCommentDto.parent);
+      }
+      comment.parent = parent;
       return this.dataSource.manager.save(comment);
     } catch (error) {
       throw new BadRequestException('Error al crear Comentario', {
