@@ -93,6 +93,10 @@ export class NewsService {
         });
       await this.findSignedUrl(news.newsImages, 'img_news');
       await this.findSignedUrl(news.newsFiles, 'img_files');
+      for await (const childrenNews of news.children) {
+        await this.findSignedUrl(childrenNews.newsImages, 'img_news');
+        await this.findSignedUrl(childrenNews.newsFiles, 'img_files');
+      }
       return news;
     }
     return null;

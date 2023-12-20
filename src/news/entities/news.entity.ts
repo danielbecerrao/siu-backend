@@ -61,10 +61,14 @@ export class News {
   @DeleteDateColumn()
   private readonly deletedAt!: Date | null;
 
-  @OneToMany(() => NewsFile, (newsfile: NewsFile) => newsfile.news)
+  @OneToMany(() => NewsFile, (newsfile: NewsFile) => newsfile.news, {
+    eager: true,
+  })
   public newsFiles!: NewsFile[];
 
-  @OneToMany(() => NewsImage, (newsImage: NewsImage) => newsImage.news)
+  @OneToMany(() => NewsImage, (newsImage: NewsImage) => newsImage.news, {
+    eager: true,
+  })
   public newsImages!: NewsImage[];
 
   @OneToMany(() => Comment, (comment: Comment) => comment.news)
