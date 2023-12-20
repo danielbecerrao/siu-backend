@@ -1,3 +1,4 @@
+import { City } from 'src/cities/entities/city.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Fare } from 'src/fares/entities/fare.entity';
 import { Geozone } from 'src/geozones/entities/geozone.entity';
@@ -6,6 +7,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Tree,
@@ -31,6 +33,14 @@ export class Client {
 
   @Column()
   public imageUrl!: string;
+
+  @Column({
+    nullable: true,
+  })
+  public cityId!: number;
+
+  @ManyToOne(() => City, (city: City) => city.clients)
+  public city!: City;
 
   @TreeParent()
   public parent?: Client | null;

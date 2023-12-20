@@ -11,7 +11,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import type { UpdateUserDto } from './dto/update-user.dto';
 import type { RegisterUserDto } from './dto/register-user.dto';
 import { FilesService } from 'src/files/files.service';
-
 @Injectable()
 export class UsersService {
   public constructor(
@@ -20,6 +19,24 @@ export class UsersService {
     private readonly filesService: FilesService,
     private readonly dataSource: DataSource,
   ) {}
+
+  public async userResponse(user: User): Promise<User> {
+    const signedUrl: string = await this.filesService.getPresignedUrl(
+      'img_users',
+      user.profilePicture,
+      user.id,
+    );
+    user['url'] = signedUrl;
+    return user;
+  }
+
+  public async userResponseArray(users: User[]): Promise<User[]> {
+    return Promise.all(
+      users.map(async (user: User) => {
+        return this.userResponse(user);
+      }),
+    );
+  }
 
   public async create(
     createUserDto: CreateUserDto,
@@ -55,14 +72,16 @@ export class UsersService {
   }
 
   public async findAll(): Promise<User[]> {
-    return this.userRepository.find();
+    const users: User[] = await this.userRepository.find();
+    return this.userResponseArray(users);
   }
 
   public async findOne(id: number): Promise<User | null> {
     const user: User | null = await this.userRepository.findOneBy({
       id,
     });
-    return user;
+    if (!user) return null;
+    return this.userResponse(user);
   }
 
   public async current(user: User): Promise<User | null> {

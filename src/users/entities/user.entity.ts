@@ -1,3 +1,4 @@
+import { CommentLog } from 'src/comments/entities/commentlog.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -28,6 +29,7 @@ import { SiteLog } from '../../sites/entities/sitelog.entity';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../roles/entities/role.entity';
+import { Comment } from '../../comments/entities/comment.entity';
 import { IdentificationType } from '../../identificationtypes/entities/identificationtype.entity';
 import { AddressLog } from '../../addresses/entities/addresslog.entity';
 import { NewsFileLog } from '../../newsfiles/entities/newsFilelog.entity';
@@ -128,6 +130,9 @@ export class User {
   @DeleteDateColumn()
   private readonly deletedAt!: Date | null;
 
+  @OneToMany(() => Comment, (comment: Comment) => comment.user)
+  public comments!: [];
+
   @OneToMany(() => ActionLog, (actionLog: ActionLog) => actionLog.user)
   public actionLogs!: ActionLog[];
 
@@ -178,6 +183,9 @@ export class User {
 
   @OneToMany(() => UserLog, (userLog: UserLog) => userLog.user)
   public userLogs!: UserLog[];
+
+  @OneToMany(() => CommentLog, (commentLog: CommentLog) => commentLog.user)
+  public commentLogs!: CommentLog[];
 
   @BeforeInsert()
   @BeforeUpdate()

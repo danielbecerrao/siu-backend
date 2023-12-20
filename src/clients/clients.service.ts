@@ -35,7 +35,9 @@ export class ClientsService {
   }
 
   public async findAll(): Promise<Client[]> {
-    return this.dataSource.manager.getTreeRepository(Client).findTrees();
+    return this.dataSource.manager.getTreeRepository(Client).findTrees({
+      relations: ['city'],
+    });
   }
 
   public async findOne(id: number): Promise<Client | null> {
@@ -47,7 +49,9 @@ export class ClientsService {
     if (parent)
       return this.dataSource.manager
         .getTreeRepository(Client)
-        .findDescendantsTree(parent);
+        .findDescendantsTree(parent, {
+          relations: ['city'],
+        });
     return null;
   }
 
