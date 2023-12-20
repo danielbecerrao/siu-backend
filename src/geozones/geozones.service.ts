@@ -18,7 +18,15 @@ export class GeozonesService {
   ) {}
 
   public async create(createGeozoneDto: CreateGeozoneDto): Promise<Geozone> {
-    return this.geozoneRepository.create(createGeozoneDto);
+    try {
+      const geozone: Geozone = this.geozoneRepository.create(createGeozoneDto);
+      return await this.geozoneRepository.save(geozone);
+    } catch (error) {
+      throw new BadRequestException('Error al crear la Ruta', {
+        cause: new Error(),
+        description: `Ocurrió un error en el servidor: ${error}`,
+      });
+    }
   }
 
   public async findAll(): Promise<Geozone[]> {

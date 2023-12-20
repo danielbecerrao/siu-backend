@@ -20,7 +20,15 @@ export class RoutesService {
   ) {}
 
   public async create(createRouteDto: CreateRouteDto): Promise<Route> {
-    return this.routeRepository.create(createRouteDto);
+    try {
+      const route: Route = this.routeRepository.create(createRouteDto);
+      return await this.routeRepository.save(route);
+    } catch (error) {
+      throw new BadRequestException('Error al crear la Ruta', {
+        cause: new Error(),
+        description: `Ocurrió un error en el servidor: ${error}`,
+      });
+    }
   }
 
   public async findAll(): Promise<Route[]> {
