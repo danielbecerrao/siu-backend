@@ -1,6 +1,6 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import type { User } from '../../users/entities/user.entity';
 
@@ -20,7 +20,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     );
     if (!user) {
       await this.authService.log(2, username.toLowerCase());
-      throw new UnauthorizedException();
+      throw new HttpException('Unauthorized', HttpStatus.PAYMENT_REQUIRED);
     }
     await this.authService.log(1, username.toLowerCase());
     return user;
