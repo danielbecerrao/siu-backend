@@ -7,5 +7,5 @@ export class CreateCommentDto {
   public newsId?: number | null;
 
   @IsOptional()
-  public parent?: number | null;
+  public parent?: number;
 }

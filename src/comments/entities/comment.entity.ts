@@ -41,7 +41,7 @@ export class Comment {
   public news?: News | null;
 
   @TreeParent()
-  public parent?: number | null;
+  public parent?: Comment | null;
 
   @TreeChildren()
   public children!: Comment[];
