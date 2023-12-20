@@ -37,6 +37,7 @@ import { NewsImageLog } from '../../newsimages/entities/newsImagelog.entity';
 import { NewsCategoryLog } from '../../newscategories/entities/newsCategorylog.entity';
 import { NewsLog } from '../../news/entities/newslog.entity';
 import { FareLog } from 'src/fares/entities/farelog.entity';
+import { Address } from 'src/addresses/entities/address.entity';
 
 @Entity('users')
 @Unique(['username'])
@@ -186,6 +187,9 @@ export class User {
 
   @OneToMany(() => CommentLog, (commentLog: CommentLog) => commentLog.user)
   public commentLogs!: CommentLog[];
+
+  @OneToMany(() => Address, (address: Address) => address.user)
+  public addresses!: Address[];
 
   @BeforeInsert()
   @BeforeUpdate()
