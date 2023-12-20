@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { config } from 'dotenv';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -11,6 +15,7 @@ import type {
   RouteDetailInterface,
 } from 'src/routes/interfaces/route.interface';
 import type { GeozoneInterface } from 'src/geozones/interfaces/geozone.interface';
+import type { StoryInterface } from 'src/stories/interfaces/stories.interface';
 
 config({ path: '.env' });
 
@@ -75,7 +80,7 @@ export class PayService {
     const url: string = `${credentials.url}/FARE/${id}`;
     const { data } = await firstValueFrom(
       this.httpService
-        .get<FareInterface>(url, {
+        .get<FareInterface | null>(url, {
           headers: {
             authorization: 'Bearer ' + accessToken,
           },
@@ -86,6 +91,12 @@ export class PayService {
           }),
         ),
     );
+    if (!data) {
+      throw new NotFoundException('Error al obtener la Tarifa', {
+        cause: new Error(),
+        description: 'Tarifa no encontrada por id',
+      });
+    }
     return data;
   }
 
@@ -115,7 +126,7 @@ export class PayService {
     const url: string = `${credentials.url}/ROUTE/${id}`;
     const { data } = await firstValueFrom(
       this.httpService
-        .get<RouteInterface>(url, {
+        .get<RouteInterface | null>(url, {
           headers: {
             authorization: 'Bearer ' + accessToken,
           },
@@ -126,6 +137,12 @@ export class PayService {
           }),
         ),
     );
+    if (!data) {
+      throw new NotFoundException('Error al obtener la Ruta', {
+        cause: new Error(),
+        description: 'Ruta no encontrada por id',
+      });
+    }
     return data;
   }
 
@@ -176,7 +193,7 @@ export class PayService {
     const url: string = `${credentials.url}/GEO_ZONE/${id}`;
     const { data } = await firstValueFrom(
       this.httpService
-        .get<GeozoneInterface>(url, {
+        .get<GeozoneInterface | null>(url, {
           headers: {
             authorization: 'Bearer ' + accessToken,
           },
@@ -187,6 +204,59 @@ export class PayService {
           }),
         ),
     );
+
+    if (!data) {
+      throw new NotFoundException('Error al obtener la Geozona', {
+        cause: new Error(),
+        description: 'Geozona no encontrada por id',
+      });
+    }
+    return data;
+  }
+
+  //HISTORIAS
+  public async getAllStories(accessToken: string): Promise<StoryInterface> {
+    const url: string = `${credentials.url}/STORY`;
+    const { data } = await firstValueFrom(
+      this.httpService
+        .get<StoryInterface>(url, {
+          headers: {
+            authorization: 'Bearer ' + accessToken,
+          },
+        })
+        .pipe(
+          catchError((error: AxiosError) => {
+            throw new BadRequestException(error);
+          }),
+        ),
+    );
+    return data;
+  }
+
+  public async getOneStory(
+    id: number,
+    accessToken: string,
+  ): Promise<StoryInterface> {
+    const url: string = `${credentials.url}/STORY/${id}`;
+    const { data } = await firstValueFrom(
+      this.httpService
+        .get<StoryInterface | null>(url, {
+          headers: {
+            authorization: 'Bearer ' + accessToken,
+          },
+        })
+        .pipe(
+          catchError((error: AxiosError) => {
+            throw new BadRequestException(error);
+          }),
+        ),
+    );
+    if (!data) {
+      throw new NotFoundException('Error al obtener la Historia', {
+        cause: new Error(),
+        description: 'Historia no encontrada por id',
+      });
+    }
     return data;
   }
 }

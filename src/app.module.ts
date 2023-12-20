@@ -38,6 +38,7 @@ import { AddressModule } from './addresses/address.module';
 import { RoutesModule } from './routes/routes.module';
 import { FaresModule } from './fares/fares.module';
 import { GeozonesModule } from './geozones/geozones.module';
+import { StoriesModule } from './stories/stories.module';
 
 @Module({
   imports: [
@@ -88,6 +89,7 @@ import { GeozonesModule } from './geozones/geozones.module';
     RoutesModule,
     FaresModule,
     GeozonesModule,
+    StoriesModule,
   ],
   providers: [
     {
