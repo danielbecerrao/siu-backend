@@ -7,12 +7,14 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Tree,
   TreeChildren,
   TreeParent,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('comments')
+@Tree('closure-table')
 export class Comment {
   @PrimaryGeneratedColumn()
   public id!: number;
