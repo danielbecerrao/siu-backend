@@ -4,21 +4,35 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import type { CreateCommentDto } from './dto/create-comment.dto';
 import type { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
+import type { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class CommentsService {
   public constructor(
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
+    private readonly dataSource: DataSource,
   ) {}
-  public async create(createCommentDto: CreateCommentDto): Promise<Comment> {
+  public async create(
+    createCommentDto: CreateCommentDto,
+    user: User,
+  ): Promise<Comment> {
     try {
-      const comment: Comment = this.commentRepository.create(createCommentDto);
-      return await this.commentRepository.save(comment);
+      const comment: Comment = new Comment();
+      comment.content = createCommentDto.content;
+      comment.newsId = createCommentDto.newsId;
+      comment.userId = user.id;
+      comment.parent = createCommentDto.parent;
+      let parent: Comment | null = null;
+      if (createCommentDto.parent) {
+        parent = await this.findOne(createCommentDto.parent);
+      }
+      comment.parent = parent?.id;
+      return this.dataSource.manager.save(comment);
     } catch (error) {
       throw new BadRequestException('Error al crear Comentario', {
         cause: new Error(),
@@ -27,11 +41,16 @@ export class CommentsService {
     }
   }
 
-  public async findAll(): Promise<Comment[]> {
-    return this.commentRepository.find();
+  public async findAllByNewsId(id: number): Promise<Comment[]> {
+    const comments: Comment[] = await this.dataSource.manager
+      .getTreeRepository(Comment)
+      .findTrees({
+        relations: ['user', 'news'],
+      });
+    return comments.filter((comment: Comment) => comment.newsId === id);
   }
 
-  public async findOne(id: number): Promise<Comment | null> {
+  private async findOne(id: number): Promise<Comment | null> {
     return this.commentRepository.findOneBy({ id });
   }
 

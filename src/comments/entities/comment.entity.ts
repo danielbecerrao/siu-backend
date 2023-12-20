@@ -23,7 +23,9 @@ export class Comment {
   @Column()
   public userId!: number;
 
-  @ManyToOne(() => User, (user: User) => user.comments)
+  @ManyToOne(() => User, (user: User) => user.comments, {
+    eager: true,
+  })
   public user!: User;
 
   @Column({
@@ -31,11 +33,13 @@ export class Comment {
   })
   public newsId?: number | null;
 
-  @ManyToOne(() => News, (news: News) => news.comments)
+  @ManyToOne(() => News, (news: News) => news.comments, {
+    eager: true,
+  })
   public news?: News | null;
 
   @TreeParent()
-  public parent?: Comment | null;
+  public parent?: number | null;
 
   @TreeChildren()
   public children!: Comment[];

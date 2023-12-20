@@ -17,6 +17,8 @@ import type { Comment } from './entities/comment.entity';
 import { CheckPolicies } from '../common/decorators/checkPolicies.decorator';
 import type { AppAbility } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/policies.guard';
+import { GetUser } from 'src/common/decorators/user.decorator';
+import { User } from 'src/users/entities/user.entity';
 
 @Controller('comments')
 @UseGuards(JwtAuthGuard, PoliciesGuard)
@@ -29,20 +31,15 @@ export class CommentsController {
   @CheckPolicies((ability: AppAbility) => ability.can('Create', 'Comment'))
   public async create(
     @Body() createCommentDto: CreateCommentDto,
+    @GetUser() user: User,
   ): Promise<Comment> {
-    return this.commentsService.create(createCommentDto);
+    return this.commentsService.create(createCommentDto, user);
   }
 
-  @Get()
+  @Get('news/:id')
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Comment'))
-  public async findAll(): Promise<Comment[]> {
-    return this.commentsService.findAll();
-  }
-
-  @Get(':id')
-  @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Comment'))
-  public async findOne(@Param('id') id: string): Promise<Comment | null> {
-    return this.commentsService.findOne(+id);
+  public async findAllByNewsId(@Param('id') id: string): Promise<Comment[]> {
+    return this.commentsService.findAllByNewsId(+id);
   }
 
   @Patch(':id')
