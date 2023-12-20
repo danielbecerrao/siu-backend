@@ -20,7 +20,7 @@ export class NewsFile {
   @Column()
   public newsId!: number;
 
-  @ManyToOne(() => News, (news: News) => news.newsfiles)
+  @ManyToOne(() => News, (news: News) => news.newsFiles)
   public news!: News;
 
   @CreateDateColumn()

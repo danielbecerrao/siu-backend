@@ -15,4 +15,7 @@ export class CreateClientDto {
 
   @IsOptional()
   public parent?: number;
+
+  @IsNotEmpty()
+  public cityId!: number;
 }

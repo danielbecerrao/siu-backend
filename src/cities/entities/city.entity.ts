@@ -1,3 +1,4 @@
+import { Client } from 'src/clients/entities/client.entity';
 import { Country } from '../../countries/entities/country.entity';
 import { Region } from '../../regions/entities/region.entity';
 import { Subregion } from '../../subregions/entities/subregion.entity';
@@ -7,6 +8,7 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -49,4 +51,7 @@ export class City {
 
   @DeleteDateColumn()
   private readonly deletedAt!: Date | null;
+
+  @OneToMany(() => Client, (client: Client) => client.city)
+  public clients!: Client[];
 }

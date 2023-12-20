@@ -39,11 +39,12 @@ export class NewsController {
 
   @Get(':id')
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'New'))
-  public async findOneParent(@Param('id') id: string): Promise<News | null> {
-    return this.newsService.findOneParent(+id);
+  public async findOneWithChildren(
+    @Param('id') id: string,
+  ): Promise<News | null> {
+    return this.newsService.findOneWithChildren(+id);
   }
 
-  // obtener noticias por categoria
   @Get('category/:id')
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'New'))
   public async findNewsByCategory(

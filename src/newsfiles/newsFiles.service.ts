@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import type { CreateNewsfileDto } from './dto/create-news-file.dto';
-import type { UpdateNewsfileDto } from './dto/update-news-file.dto';
+import { DataSource, Repository } from 'typeorm';
+import type { CreateNewsFileDto } from './dto/create-news-file.dto';
+import type { UpdateNewsFileDto } from './dto/update-news-file.dto';
 import { NewsFile } from './entities/newsFile.entity';
 import { FilesService } from 'src/files/files.service';
 
@@ -16,17 +16,32 @@ export class NewsFilesService {
     @InjectRepository(NewsFile)
     private readonly newsfileRepository: Repository<NewsFile>,
     private readonly filesService: FilesService,
+    private readonly dataSource: DataSource,
   ) {}
-  public async create(createNewsfileDto: CreateNewsfileDto): Promise<NewsFile> {
+
+  public async create(
+    createNewsfileDto: CreateNewsFileDto,
+    file: Express.Multer.File,
+  ): Promise<NewsFile> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      const newsfile: NewsFile =
+      const newsFile: NewsFile =
         this.newsfileRepository.create(createNewsfileDto);
-      return await this.newsfileRepository.save(newsfile);
+      newsFile.name = file.originalname;
+      const newNewsFile: NewsFile = await queryRunner.manager.save(newsFile);
+      await this.filesService.upload(file, 'img_news', newNewsFile.id);
+      await queryRunner.commitTransaction();
+      return newNewsFile;
     } catch (error) {
-      throw new BadRequestException('Error al crear Newsfile', {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException('Error al crear Archivo de noticia', {
         cause: new Error(),
-        description: `Ocurrió un error en el servidor: ${error}}`,
+        description: `Ocurrió un error en el servidor: ${error}`,
       });
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -50,40 +65,52 @@ export class NewsFilesService {
 
   public async update(
     id: number,
-    updateNewsfileDto: UpdateNewsfileDto,
+    updateNewsfileDto: UpdateNewsFileDto,
   ): Promise<NewsFile> {
     const newsfile: NewsFile | null = await this.findOne(id);
     if (!newsfile)
-      throw new NotFoundException('Error al actualizar Newsfile', {
-        cause: new Error(),
-        description: 'Newsfile no encontrado por id',
-      });
+      throw new NotFoundException(
+        'Error al actualizar el archivo de la noticia',
+        {
+          cause: new Error(),
+          description: 'Archivo no encontrado por id',
+        },
+      );
     try {
       return await this.newsfileRepository.save(
         Object.assign(newsfile, updateNewsfileDto),
       );
     } catch (error) {
-      throw new BadRequestException('Error al actualizar Newsfile', {
-        cause: new Error(),
-        description: `Ocurrió un error en el servidor: ${error}}`,
-      });
+      throw new BadRequestException(
+        'Error al actualizar la archivo de la noticia',
+        {
+          cause: new Error(),
+          description: `Ocurrió un error en el servidor: ${error}}`,
+        },
+      );
     }
   }
 
   public async remove(id: number): Promise<NewsFile> {
     const newsfile: NewsFile | null = await this.findOne(id);
     if (!newsfile)
-      throw new NotFoundException('Error al eliminar Newsfile', {
-        cause: new Error(),
-        description: 'Newsfile no encontrado por id',
-      });
+      throw new NotFoundException(
+        'Error al eliminar el archivo de la noticia',
+        {
+          cause: new Error(),
+          description: 'Newsfile no encontrado por id',
+        },
+      );
     try {
       return await this.newsfileRepository.softRemove(newsfile);
     } catch (error) {
-      throw new BadRequestException('Error al eliminar Newsfile', {
-        cause: new Error(),
-        description: `Ocurrió un error en el servidor: ${error}}`,
-      });
+      throw new BadRequestException(
+        'Error al eliminar el archivo de la noticia',
+        {
+          cause: new Error(),
+          description: `Ocurrió un error en el servidor: ${error}}`,
+        },
+      );
     }
   }
 }

@@ -22,26 +22,6 @@ export class UserInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
     this.cls.set('user', user);
-    return next.handle().pipe(
-      map(async (data) => {
-        if (Array.isArray(data) && user) {
-          for await (const user of data) {
-            if (user.profilePicture)
-              user.profilePictureUrl = await this.fileService.getPresignedUrl(
-                'img_users',
-                user.profilePicture,
-                user.id,
-              );
-          }
-        } else if (data.profilePicture && user) {
-          data.profilePictureUrl = await this.fileService.getPresignedUrl(
-            'img_users',
-            data.profilePicture,
-            user.id,
-          );
-        }
-        return data;
-      }),
-    );
+    return next.handle();
   }
 }

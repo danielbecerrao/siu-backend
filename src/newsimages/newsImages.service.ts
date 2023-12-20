@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import type { CreateNewsImageDto } from './dto/create-news-image.dto';
 import type { UpdateNewsImageDto } from './dto/update-news-image.dto';
 import { NewsImage } from './entities/newsImage.entity';
@@ -16,19 +16,32 @@ export class NewsImagesService {
     @InjectRepository(NewsImage)
     private readonly newsimageRepository: Repository<NewsImage>,
     private readonly filesService: FilesService,
+    private readonly dataSource: DataSource,
   ) {}
+
   public async create(
     createNewsimageDto: CreateNewsImageDto,
+    image: Express.Multer.File,
   ): Promise<NewsImage> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      const newsimage: NewsImage =
+      const newsImage: NewsImage =
         this.newsimageRepository.create(createNewsimageDto);
-      return await this.newsimageRepository.save(newsimage);
+      newsImage.name = image.originalname;
+      const newNewsImage: NewsImage = await queryRunner.manager.save(newsImage);
+      await this.filesService.upload(image, 'img_news', newNewsImage.id);
+      await queryRunner.commitTransaction();
+      return newNewsImage;
     } catch (error) {
-      throw new BadRequestException('Error al crear Newsimage', {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException('Error al crear Imagen de noticia', {
         cause: new Error(),
-        description: `Ocurrió un error en el servidor: ${error}}`,
+        description: `Ocurrió un error en el servidor: ${error}`,
       });
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -43,7 +56,7 @@ export class NewsImagesService {
       });
     if (newsImage) {
       newsImage.name = await this.filesService.getPresignedUrl(
-        'news_files',
+        'news_images',
         newsImage.name,
         newsImage.id,
       );
@@ -57,36 +70,45 @@ export class NewsImagesService {
   ): Promise<NewsImage> {
     const newsimage: NewsImage | null = await this.findOne(id);
     if (!newsimage)
-      throw new NotFoundException('Error al actualizar Newsimage', {
-        cause: new Error(),
-        description: 'Newsimage no encontrado por id',
-      });
+      throw new NotFoundException(
+        'Error al actualizar la Imagen de la noticia',
+        {
+          cause: new Error(),
+          description: 'Newsimage no encontrado por id',
+        },
+      );
     try {
       return await this.newsimageRepository.save(
         Object.assign(newsimage, updateNewsimageDto),
       );
     } catch (error) {
-      throw new BadRequestException('Error al actualizar Newsimage', {
-        cause: new Error(),
-        description: `Ocurrió un error en el servidor: ${error}}`,
-      });
+      throw new BadRequestException(
+        'Error al actualizar la imagen de la noticia',
+        {
+          cause: new Error(),
+          description: `Ocurrió un error en el servidor: ${error}}`,
+        },
+      );
     }
   }
 
   public async remove(id: number): Promise<NewsImage> {
     const newsimage: NewsImage | null = await this.findOne(id);
     if (!newsimage)
-      throw new NotFoundException('Error al eliminar Newsimage', {
+      throw new NotFoundException('Error al eliminar la imagen de la noticia', {
         cause: new Error(),
         description: 'Newsimage no encontrado por id',
       });
     try {
       return await this.newsimageRepository.softRemove(newsimage);
     } catch (error) {
-      throw new BadRequestException('Error al eliminar Newsimage', {
-        cause: new Error(),
-        description: `Ocurrió un error en el servidor: ${error}}`,
-      });
+      throw new BadRequestException(
+        'Error al eliminar la imagen de la noticia',
+        {
+          cause: new Error(),
+          description: `Ocurrió un error en el servidor: ${error}}`,
+        },
+      );
     }
   }
 }

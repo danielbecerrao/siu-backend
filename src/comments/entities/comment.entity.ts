@@ -1,4 +1,4 @@
-import { City } from 'src/cities/entities/city.entity';
+import { News } from 'src/news/entities/news.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -6,45 +6,39 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
-  Tree,
   TreeChildren,
   TreeParent,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('clients')
-@Tree('closure-table')
-export class Client {
+@Entity('comments')
+export class Comment {
   @PrimaryGeneratedColumn()
   public id!: number;
 
   @Column()
-  public name!: string;
+  public content!: string;
 
   @Column()
-  public primaryColor!: string;
+  public userId!: number;
 
-  @Column()
-  public secondaryColor!: string;
-
-  @Column()
-  public imageUrl!: string;
+  @ManyToOne(() => User, (user: User) => user.comments)
+  public user!: User;
 
   @Column({
     nullable: true,
   })
-  public cityId!: number;
+  public newsId?: number | null;
 
-  @ManyToOne(() => City, (city: City) => city.clients)
-  public city!: City;
+  @ManyToOne(() => News, (news: News) => news.comments)
+  public news?: News | null;
 
   @TreeParent()
-  public parent?: Client | null;
+  public parent?: Comment | null;
 
   @TreeChildren()
-  public children!: Client[];
+  public children!: Comment[];
 
   @CreateDateColumn()
   private readonly createdAt!: Date;
@@ -54,7 +48,4 @@ export class Client {
 
   @DeleteDateColumn()
   private readonly deletedAt!: Date | null;
-
-  @OneToMany(() => User, (user: User) => user.client)
-  public users!: User[];
 }

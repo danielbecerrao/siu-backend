@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateNewsfileDto {
+export class CreateNewsFileDto {
   @IsNotEmpty()
-  public name!: string;
+  public newsId!: number;
 }

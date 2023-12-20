@@ -6,17 +6,20 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { NewsFilesService } from './newsFiles.service';
-import { CreateNewsfileDto } from './dto/create-news-file.dto';
-import { UpdateNewsfileDto } from './dto/update-news-file.dto';
+import { CreateNewsFileDto } from './dto/create-news-file.dto';
+import { UpdateNewsFileDto } from './dto/update-news-file.dto';
 import type { NewsFile } from './entities/newsFile.entity';
 import { CheckPolicies } from '../common/decorators/checkPolicies.decorator';
 import type { AppAbility } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/policies.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('newsfiles')
 @UseGuards(JwtAuthGuard, PoliciesGuard)
@@ -26,11 +29,13 @@ export class NewsFilesController {
   public constructor(private readonly newsfilesService: NewsFilesService) {}
 
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   @CheckPolicies((ability: AppAbility) => ability.can('Create', 'Newsfile'))
   public async create(
-    @Body() createNewsfileDto: CreateNewsfileDto,
+    @Body() createNewsFileDto: CreateNewsFileDto,
+    @UploadedFile() newsFile: Express.Multer.File,
   ): Promise<NewsFile> {
-    return this.newsfilesService.create(createNewsfileDto);
+    return this.newsfilesService.create(createNewsFileDto, newsFile);
   }
 
   @Get()
@@ -49,9 +54,9 @@ export class NewsFilesController {
   @CheckPolicies((ability: AppAbility) => ability.can('Update', 'Newsfile'))
   public async update(
     @Param('id') id: string,
-    @Body() updateNewsfileDto: UpdateNewsfileDto,
+    @Body() updateNewsFileDto: UpdateNewsFileDto,
   ): Promise<NewsFile> {
-    return this.newsfilesService.update(+id, updateNewsfileDto);
+    return this.newsfilesService.update(+id, updateNewsFileDto);
   }
 
   @Delete(':id')

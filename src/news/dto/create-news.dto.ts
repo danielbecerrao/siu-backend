@@ -8,6 +8,9 @@ export class CreateNewsDto {
   public description!: string;
 
   @IsNotEmpty()
+  public shortDescription!: string;
+
+  @IsNotEmpty()
   public publicationDate!: Date;
 
   @IsOptional()

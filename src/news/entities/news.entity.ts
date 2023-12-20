@@ -1,3 +1,4 @@
+import { Comment } from 'src/comments/entities/comment.entity';
 import { NewsCategory } from 'src/newscategories/entities/newsCategory.entity';
 import { NewsFile } from 'src/newsfiles/entities/newsFile.entity';
 import { NewsImage } from 'src/newsimages/entities/newsImage.entity';
@@ -26,6 +27,9 @@ export class News {
 
   @Column()
   public description!: string;
+
+  @Column({ default: '' })
+  public shortDescription!: string;
 
   @Column()
   public publicationDate!: Date;
@@ -58,8 +62,11 @@ export class News {
   private readonly deletedAt!: Date | null;
 
   @OneToMany(() => NewsFile, (newsfile: NewsFile) => newsfile.news)
-  public newsfiles!: NewsFile[];
+  public newsFiles!: NewsFile[];
 
   @OneToMany(() => NewsImage, (newsImage: NewsImage) => newsImage.news)
-  public newsimages!: NewsImage[];
+  public newsImages!: NewsImage[];
+
+  @OneToMany(() => Comment, (comment: Comment) => comment.news)
+  public comments!: Comment[];
 }

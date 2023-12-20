@@ -6,7 +6,9 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -17,6 +19,7 @@ import type { NewsImage } from './entities/newsImage.entity';
 import { CheckPolicies } from '../common/decorators/checkPolicies.decorator';
 import type { AppAbility } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/policies.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('newsimages')
 @UseGuards(JwtAuthGuard, PoliciesGuard)
@@ -26,11 +29,13 @@ export class NewsImagesController {
   public constructor(private readonly newsimagesService: NewsImagesService) {}
 
   @Post()
+  @UseInterceptors(FileInterceptor('image'))
   @CheckPolicies((ability: AppAbility) => ability.can('Create', 'Newsimage'))
   public async create(
     @Body() createNewsimageDto: CreateNewsImageDto,
+    @UploadedFile() newsImage: Express.Multer.File,
   ): Promise<NewsImage> {
-    return this.newsimagesService.create(createNewsimageDto);
+    return this.newsimagesService.create(createNewsimageDto, newsImage);
   }
 
   @Get()
