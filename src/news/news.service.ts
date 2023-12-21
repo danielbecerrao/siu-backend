@@ -56,19 +56,12 @@ export class NewsService {
   }
 
   public async findAll(): Promise<News[]> {
-    const news: News[] = await this.dataSource.manager
-      .getTreeRepository(News)
-      .findTrees({
-        relations: ['newsCategory', 'newsImages', 'newsFiles'],
-        depth: 1,
-      });
+    const news: News[] = await this.newRepository.find({
+      relations: ['newsCategory', 'newsImages', 'newsFiles', 'children'],
+    });
     for await (const inews of news) {
       await this.findSignedUrl(inews.newsImages, 'img_news');
       await this.findSignedUrl(inews.newsFiles, 'img_files');
-      for await (const childrenNews of inews.children) {
-        await this.findSignedUrl(childrenNews.newsImages, 'img_news');
-        await this.findSignedUrl(childrenNews.newsFiles, 'img_files');
-      }
     }
     return news;
   }
@@ -78,8 +71,15 @@ export class NewsService {
   }
 
   public async findNewsByCategory(id: number): Promise<News[] | null> {
-    const news: News[] = await this.findAll();
-    return news.filter((inews) => inews.newsCategoryId === id);
+    const news: News[] = await this.newRepository.find({
+      relations: ['newsCategory', 'newsImages', 'newsFiles', 'children'],
+      where: { newsCategoryId: id },
+    });
+    for await (const inews of news) {
+      await this.findSignedUrl(inews.newsImages, 'img_news');
+      await this.findSignedUrl(inews.newsFiles, 'img_files');
+    }
+    return news;
   }
 
   public async findOneWithChildren(id: number): Promise<News | null> {
