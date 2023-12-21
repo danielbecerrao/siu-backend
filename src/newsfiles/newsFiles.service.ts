@@ -31,7 +31,12 @@ export class NewsFilesService {
         this.newsfileRepository.create(createNewsfileDto);
       newsFile.name = file.originalname;
       const newNewsFile: NewsFile = await queryRunner.manager.save(newsFile);
-      await this.filesService.upload(file, 'img_news', newNewsFile.id);
+      await this.filesService.upload(
+        file.buffer,
+        file.originalname,
+        'img_news',
+        newNewsFile.id,
+      );
       await queryRunner.commitTransaction();
       return newNewsFile;
     } catch (error) {

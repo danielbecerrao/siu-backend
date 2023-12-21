@@ -22,7 +22,8 @@ export class FilesService {
   });
 
   public async upload(
-    file: Express.Multer.File,
+    buffer: Buffer,
+    name: string,
     folder: string,
     id: number,
   ): Promise<void> {
@@ -30,8 +31,8 @@ export class FilesService {
       Bucket: this.configService.getOrThrow<string>('AWS_BUCKET_NAME'),
       Key: `${this.configService.getOrThrow<string>(
         'AWS_MAIN_FOLDER',
-      )}/${folder}/${id}-${file.originalname}`,
-      Body: file.buffer,
+      )}/${folder}/${id}-${name}`,
+      Body: buffer,
     });
     await this.s3Client.send(command);
   }

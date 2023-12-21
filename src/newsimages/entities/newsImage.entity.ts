@@ -17,6 +17,9 @@ export class NewsImage {
   @Column()
   public name!: string;
 
+  @Column({ nullable: true })
+  public name2x!: string;
+
   @Column()
   public newsId!: number;
 

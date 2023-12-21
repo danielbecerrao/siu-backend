@@ -52,6 +52,13 @@ export class NewsService {
         element.name,
         element.id,
       );
+      if (folder === 'img_news') {
+        element['url2x'] = await this.filesService.getPresignedUrl(
+          folder,
+          `2x${element.name}`,
+          element.id,
+        );
+      }
     }
   }
 

@@ -10,7 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { NewsImagesService } from './newsImages.service';
 import { CreateNewsImageDto } from './dto/create-news-image.dto';
@@ -29,13 +29,14 @@ export class NewsImagesController {
   public constructor(private readonly newsimagesService: NewsImagesService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('image'))
   @CheckPolicies((ability: AppAbility) => ability.can('Create', 'Newsimage'))
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
   public async create(
     @Body() createNewsimageDto: CreateNewsImageDto,
-    @UploadedFile() newsImage: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<NewsImage> {
-    return this.newsimagesService.create(createNewsimageDto, newsImage);
+    return this.newsimagesService.create(createNewsimageDto, file);
   }
 
   @Get()
