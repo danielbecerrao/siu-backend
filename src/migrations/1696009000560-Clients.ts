@@ -1,4 +1,4 @@
-import { Client } from 'src/clients/entities/client.entity';
+import { Client } from '../clients/entities/client.entity';
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class Clients1696009000560 implements MigrationInterface {

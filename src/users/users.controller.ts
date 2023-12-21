@@ -11,7 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -31,24 +31,26 @@ export class UsersController {
   public constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @ApiBearerAuth()
-  @UseInterceptors(FileInterceptor('profilePicture'))
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can('Create', 'User'))
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('profilePicture'))
   public async create(
     @Body() createUserDto: CreateUserDto,
-    @UploadedFile() profilePicture?: Express.Multer.File,
+    @UploadedFile() profilePictureFile?: Express.Multer.File,
   ): Promise<User> {
-    return this.usersService.create(createUserDto, profilePicture);
+    return this.usersService.create(createUserDto, profilePictureFile);
   }
 
   @Post('register')
-  @UseInterceptors(FileInterceptor('profilePicture'))
+  @UseInterceptors(FileInterceptor('profilePictureFile'))
+  @ApiConsumes('multipart/form-data')
   public async register(
     @Body() registerUserDto: RegisterUserDto,
-    @UploadedFile() profilePicture?: Express.Multer.File,
+    @UploadedFile() profilePictureFile?: Express.Multer.File,
   ): Promise<User> {
-    return this.usersService.register(registerUserDto, profilePicture);
+    return this.usersService.register(registerUserDto, profilePictureFile);
   }
 
   @Get()

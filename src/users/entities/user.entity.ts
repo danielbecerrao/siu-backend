@@ -1,4 +1,3 @@
-import { CommentLog } from 'src/comments/entities/commentlog.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -38,6 +37,7 @@ import { NewsCategoryLog } from '../../newscategories/entities/newsCategorylog.e
 import { NewsLog } from '../../news/entities/newslog.entity';
 import { FareLog } from 'src/fares/entities/farelog.entity';
 import { Address } from 'src/addresses/entities/address.entity';
+import { CommentLog } from '../../comments/entities/commentlog.entity';
 
 @Entity('users')
 @Unique(['username'])

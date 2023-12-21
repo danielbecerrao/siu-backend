@@ -1,4 +1,4 @@
-import { News } from 'src/news/entities/news.entity';
+import { News } from '../../news/entities/news.entity';
 import {
   Column,
   CreateDateColumn,
@@ -16,6 +16,9 @@ export class NewsImage {
 
   @Column()
   public name!: string;
+
+  @Column({ nullable: true })
+  public name2x!: string;
 
   @Column()
   public newsId!: number;

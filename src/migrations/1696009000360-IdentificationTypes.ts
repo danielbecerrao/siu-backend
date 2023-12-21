@@ -1,4 +1,4 @@
-import { IdentificationType } from 'src/identificationtypes/entities/identificationtype.entity';
+import { IdentificationType } from '../identificationtypes/entities/identificationtype.entity';
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class IdentificationTypes1696009000360 implements MigrationInterface {

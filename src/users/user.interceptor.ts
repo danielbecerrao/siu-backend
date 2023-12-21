@@ -4,9 +4,9 @@ import type {
   CallHandler,
 } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
-import { type Observable, map } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { ClsService } from 'nestjs-cls';
-import { FilesService } from 'src/files/files.service';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class UserInterceptor implements NestInterceptor {

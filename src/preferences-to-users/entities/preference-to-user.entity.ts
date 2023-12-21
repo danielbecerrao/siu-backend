@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Preference } from 'src/preferences/entities/preference.entity';
+import { Preference } from '../../preferences/entities/preference.entity';
 
 @Entity()
 export class PreferenceToUser {

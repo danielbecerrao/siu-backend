@@ -8,9 +8,9 @@ import { DataSource, Repository } from 'typeorm';
 import type { CreateNewsDto } from './dto/create-news.dto';
 import type { UpdateNewsDto } from './dto/update-news.dto';
 import { News } from './entities/news.entity';
-import { FilesService } from 'src/files/files.service';
-import type { NewsImage } from 'src/newsimages/entities/newsImage.entity';
-import type { NewsFile } from 'src/newsfiles/entities/newsFile.entity';
+import { FilesService } from '../files/files.service';
+import type { NewsImage } from '../newsimages/entities/newsImage.entity';
+import type { NewsFile } from '../newsfiles/entities/newsFile.entity';
 
 @Injectable()
 export class NewsService {
@@ -52,23 +52,23 @@ export class NewsService {
         element.name,
         element.id,
       );
+      if (folder === 'img_news') {
+        element['url2x'] = await this.filesService.getPresignedUrl(
+          folder,
+          `2x${element.name}`,
+          element.id,
+        );
+      }
     }
   }
 
   public async findAll(): Promise<News[]> {
-    const news: News[] = await this.dataSource.manager
-      .getTreeRepository(News)
-      .findTrees({
-        relations: ['newsCategory', 'newsImages', 'newsFiles'],
-        depth: 1,
-      });
+    const news: News[] = await this.newRepository.find({
+      relations: ['newsCategory', 'newsImages', 'newsFiles', 'children'],
+    });
     for await (const inews of news) {
       await this.findSignedUrl(inews.newsImages, 'img_news');
       await this.findSignedUrl(inews.newsFiles, 'img_files');
-      for await (const childrenNews of inews.children) {
-        await this.findSignedUrl(childrenNews.newsImages, 'img_news');
-        await this.findSignedUrl(childrenNews.newsFiles, 'img_files');
-      }
     }
     return news;
   }
@@ -78,8 +78,15 @@ export class NewsService {
   }
 
   public async findNewsByCategory(id: number): Promise<News[] | null> {
-    const news: News[] = await this.findAll();
-    return news.filter((inews) => inews.newsCategoryId === id);
+    const news: News[] = await this.newRepository.find({
+      relations: ['newsCategory', 'newsImages', 'newsFiles', 'children'],
+      where: { newsCategoryId: id },
+    });
+    for await (const inews of news) {
+      await this.findSignedUrl(inews.newsImages, 'img_news');
+      await this.findSignedUrl(inews.newsFiles, 'img_files');
+    }
+    return news;
   }
 
   public async findOneWithChildren(id: number): Promise<News | null> {

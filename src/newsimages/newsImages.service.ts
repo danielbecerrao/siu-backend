@@ -8,7 +8,8 @@ import { DataSource, Repository } from 'typeorm';
 import type { CreateNewsImageDto } from './dto/create-news-image.dto';
 import type { UpdateNewsImageDto } from './dto/update-news-image.dto';
 import { NewsImage } from './entities/newsImage.entity';
-import { FilesService } from 'src/files/files.service';
+import { FilesService } from '../files/files.service';
+import * as sharp from 'sharp';
 
 @Injectable()
 export class NewsImagesService {
@@ -19,9 +20,39 @@ export class NewsImagesService {
     private readonly dataSource: DataSource,
   ) {}
 
+  public async resizeImage(
+    image: Express.Multer.File,
+    width: number,
+    height: number,
+  ): Promise<Buffer> {
+    return sharp(image.buffer)
+      .resize({
+        width,
+        height,
+      })
+      .jpeg()
+      .toBuffer();
+  }
+
+  public async addUrl(newsImage: NewsImage): Promise<NewsImage> {
+    const signedUrl: string = await this.filesService.getPresignedUrl(
+      'img_news',
+      newsImage.name,
+      newsImage.id,
+    );
+    const signedUrl2x: string = await this.filesService.getPresignedUrl(
+      'img_news',
+      `2x${newsImage.name}`,
+      newsImage.id,
+    );
+    newsImage['url'] = signedUrl;
+    newsImage['url2x'] = signedUrl2x;
+    return newsImage;
+  }
+
   public async create(
     createNewsimageDto: CreateNewsImageDto,
-    image: Express.Multer.File,
+    file: Express.Multer.File,
   ): Promise<NewsImage> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -29,9 +60,24 @@ export class NewsImagesService {
     try {
       const newsImage: NewsImage =
         this.newsimageRepository.create(createNewsimageDto);
-      newsImage.name = image.originalname;
+      newsImage.name = file.originalname;
+      newsImage.name2x = `2x${file.originalname}`;
+      console.log(newsImage);
       const newNewsImage: NewsImage = await queryRunner.manager.save(newsImage);
-      await this.filesService.upload(image, 'img_news', newNewsImage.id);
+      const bufferImage: Buffer = await this.resizeImage(file, 462, 316);
+      const bufferImage2x: Buffer = await this.resizeImage(file, 3784, 2140);
+      await this.filesService.upload(
+        bufferImage,
+        newNewsImage.name,
+        'img_news',
+        newNewsImage.id,
+      );
+      await this.filesService.upload(
+        bufferImage2x,
+        newNewsImage.name2x,
+        'img_news',
+        newNewsImage.id,
+      );
       await queryRunner.commitTransaction();
       return newNewsImage;
     } catch (error) {
@@ -47,6 +93,19 @@ export class NewsImagesService {
 
   public async findAll(): Promise<NewsImage[]> {
     return this.newsimageRepository.find();
+  }
+
+  public async findByNewsId(newsId: number): Promise<NewsImage[]> {
+    const newsImages: NewsImage[] = await this.newsimageRepository.find({
+      where: {
+        newsId,
+      },
+    });
+    return Promise.all(
+      newsImages.map(async (newsImage: NewsImage) => {
+        return this.addUrl(newsImage);
+      }),
+    );
   }
 
   public async findOne(id: number): Promise<NewsImage | null> {

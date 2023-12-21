@@ -1,4 +1,4 @@
-import { News } from 'src/news/entities/news.entity';
+import { News } from '../../news/entities/news.entity';
 import {
   Column,
   CreateDateColumn,

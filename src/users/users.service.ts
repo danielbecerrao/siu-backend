@@ -10,7 +10,7 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import type { UpdateUserDto } from './dto/update-user.dto';
 import type { RegisterUserDto } from './dto/register-user.dto';
-import { FilesService } from 'src/files/files.service';
+import { FilesService } from '../files/files.service';
 @Injectable()
 export class UsersService {
   public constructor(
@@ -20,7 +20,7 @@ export class UsersService {
     private readonly dataSource: DataSource,
   ) {}
 
-  public async userResponse(user: User): Promise<User> {
+  public async addUrl(user: User): Promise<User> {
     const signedUrl: string = await this.filesService.getPresignedUrl(
       'img_users',
       user.profilePicture,
@@ -30,17 +30,17 @@ export class UsersService {
     return user;
   }
 
-  public async userResponseArray(users: User[]): Promise<User[]> {
+  public async addUrlArray(users: User[]): Promise<User[]> {
     return Promise.all(
       users.map(async (user: User) => {
-        return this.userResponse(user);
+        return this.addUrl(user);
       }),
     );
   }
 
   public async create(
     createUserDto: CreateUserDto,
-    profilePicture?: Express.Multer.File,
+    profilePictureFile?: Express.Multer.File,
   ): Promise<User> {
     const existUser = await this.findOneByUsername(createUserDto.username);
     if (existUser)
@@ -54,9 +54,14 @@ export class UsersService {
     try {
       const user: User = this.userRepository.create(createUserDto);
       const newUser: User = await queryRunner.manager.save(user);
-      if (profilePicture) {
-        await this.filesService.upload(profilePicture, 'img_users', newUser.id);
-        user.profilePicture = profilePicture.originalname;
+      if (profilePictureFile) {
+        await this.filesService.upload(
+          profilePictureFile.buffer,
+          profilePictureFile.originalname,
+          'img_users',
+          newUser.id,
+        );
+        user.profilePicture = profilePictureFile.originalname;
       }
       await queryRunner.commitTransaction();
       return newUser;
@@ -73,7 +78,7 @@ export class UsersService {
 
   public async findAll(): Promise<User[]> {
     const users: User[] = await this.userRepository.find();
-    return this.userResponseArray(users);
+    return this.addUrlArray(users);
   }
 
   public async findOne(id: number): Promise<User | null> {
@@ -81,7 +86,7 @@ export class UsersService {
       id,
     });
     if (!user) return null;
-    return this.userResponse(user);
+    return this.addUrl(user);
   }
 
   public async current(user: User): Promise<User | null> {
@@ -123,6 +128,7 @@ export class UsersService {
       });
     }
   }
+
   public async selfUpdate(
     updateUserDto: UpdateUserDto,
     user: User,
@@ -132,12 +138,12 @@ export class UsersService {
 
   public async register(
     registerUsterDto: RegisterUserDto,
-    profilePicture?: Express.Multer.File,
+    profilePictureFile?: Express.Multer.File,
   ): Promise<User> {
     const createUserDto: CreateUserDto = new CreateUserDto();
     Object.assign(createUserDto, registerUsterDto);
     createUserDto.roleId = 2;
-    return this.create(createUserDto, profilePicture);
+    return this.create(createUserDto, profilePictureFile);
   }
 
   public async remove(id: number): Promise<User> {

@@ -8,7 +8,7 @@ import { DataSource, Repository } from 'typeorm';
 import type { CreateNewsFileDto } from './dto/create-news-file.dto';
 import type { UpdateNewsFileDto } from './dto/update-news-file.dto';
 import { NewsFile } from './entities/newsFile.entity';
-import { FilesService } from 'src/files/files.service';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class NewsFilesService {
@@ -18,6 +18,16 @@ export class NewsFilesService {
     private readonly filesService: FilesService,
     private readonly dataSource: DataSource,
   ) {}
+
+  private async addUrl(newsFile: NewsFile): Promise<NewsFile> {
+    const signedUrl: string = await this.filesService.getPresignedUrl(
+      'img_files',
+      newsFile.name,
+      newsFile.id,
+    );
+    newsFile['url'] = signedUrl;
+    return newsFile;
+  }
 
   public async create(
     createNewsfileDto: CreateNewsFileDto,
@@ -31,7 +41,12 @@ export class NewsFilesService {
         this.newsfileRepository.create(createNewsfileDto);
       newsFile.name = file.originalname;
       const newNewsFile: NewsFile = await queryRunner.manager.save(newsFile);
-      await this.filesService.upload(file, 'img_news', newNewsFile.id);
+      await this.filesService.upload(
+        file.buffer,
+        file.originalname,
+        'img_news',
+        newNewsFile.id,
+      );
       await queryRunner.commitTransaction();
       return newNewsFile;
     } catch (error) {
@@ -45,8 +60,17 @@ export class NewsFilesService {
     }
   }
 
-  public async findAll(): Promise<NewsFile[]> {
-    return this.newsfileRepository.find();
+  public async findByNewsId(newsId: number): Promise<NewsFile[]> {
+    const newsFiles: NewsFile[] = await this.newsfileRepository.find({
+      where: {
+        newsId,
+      },
+    });
+    return Promise.all(
+      newsFiles.map(async (newsImage: NewsFile) => {
+        return this.addUrl(newsImage);
+      }),
+    );
   }
 
   public async findOne(id: number): Promise<NewsFile | null> {
@@ -98,7 +122,7 @@ export class NewsFilesService {
         'Error al eliminar el archivo de la noticia',
         {
           cause: new Error(),
-          description: 'Newsfile no encontrado por id',
+          description: 'Archivo de la noticia no encontrado por id',
         },
       );
     try {
