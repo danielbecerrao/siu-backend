@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { PayService } from './pay.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { UsersModule } from '../users/users.module';
@@ -9,12 +10,14 @@ import { AuthController } from './auth.controller';
 import { ConfigService } from '@nestjs/config';
 import { RefreshJwtStrategy } from './strategies/refresh-token.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 import { AuthLog } from './entities/authlog.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AuthLog]),
     UsersModule,
+    HttpModule,
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
@@ -27,6 +30,13 @@ import { AuthLog } from './entities/authlog.entity';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, RefreshJwtStrategy],
+  providers: [
+    AuthService,
+    PayService,
+    LocalStrategy,
+    JwtStrategy,
+    RefreshJwtStrategy,
+  ],
+  exports: [AuthService],
 })
 export class AuthModule {}

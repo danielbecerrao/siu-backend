@@ -35,6 +35,10 @@ import { UserInterceptor } from './users/user.interceptor';
 import { PreferencesModule } from './preferences/preferences.module';
 import { PreferencesToUsersModule } from './preferences-to-users/preferences-to-users.module';
 import { AddressModule } from './addresses/address.module';
+import { RoutesModule } from './routes/routes.module';
+import { FaresModule } from './fares/fares.module';
+import { GeozonesModule } from './geozones/geozones.module';
+import { StoriesModule } from './stories/stories.module';
 
 @Module({
   imports: [
@@ -82,6 +86,10 @@ import { AddressModule } from './addresses/address.module';
     SubjectsModule,
     SubregionsModule,
     UsersModule,
+    RoutesModule,
+    FaresModule,
+    GeozonesModule,
+    StoriesModule,
   ],
   providers: [
     {

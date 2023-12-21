@@ -8,6 +8,7 @@ import type { Payload } from './interfaces/payload.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthLog } from './entities/authlog.entity';
 import { Repository } from 'typeorm';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,7 @@ export class AuthService {
     @InjectRepository(AuthLog)
     private readonly authLogsRepository: Repository<AuthLog>,
     private readonly usersService: UsersService,
+    private readonly httpService: HttpService,
     private readonly jwtService: JwtService,
   ) {}
 

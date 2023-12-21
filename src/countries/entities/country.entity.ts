@@ -1,6 +1,7 @@
 import { City } from '../../cities/entities/city.entity';
 import { Region } from '../../regions/entities/region.entity';
 import { Subregion } from '../../subregions/entities/subregion.entity';
+import { Geozone } from 'src/geozones/entities/geozone.entity';
 import {
   Column,
   CreateDateColumn,
@@ -36,4 +37,7 @@ export class Country {
 
   @OneToMany(() => Region, (region: Region) => region.country)
   public regions!: Region[];
+
+  @OneToMany(() => Geozone, (geozone: Geozone) => geozone.country)
+  public geozones!: Geozone[];
 }

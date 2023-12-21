@@ -10,11 +10,18 @@ import {
 } from 'typeorm';
 import type { PaginateConfig } from 'nestjs-paginate';
 import { FilterOperator } from 'nestjs-paginate';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity('addresses')
 export class Address {
   @PrimaryGeneratedColumn()
   public id!: number;
+
+  @Column()
+  public userId!: number;
+
+  @ManyToOne(() => User, (user: User) => user.addresses)
+  public user!: User;
 
   @Column()
   public addressTypeId!: number;

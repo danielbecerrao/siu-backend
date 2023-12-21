@@ -1,5 +1,7 @@
-import { City } from '../../cities/entities/city.entity';
-import { User } from '../../users/entities/user.entity';
+import { City } from 'src/cities/entities/city.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Fare } from 'src/fares/entities/fare.entity';
+import { Geozone } from 'src/geozones/entities/geozone.entity';
 import {
   Column,
   CreateDateColumn,
@@ -57,4 +59,10 @@ export class Client {
 
   @OneToMany(() => User, (user: User) => user.client)
   public users!: User[];
+
+  @OneToMany(() => Fare, (fare: Fare) => fare.client)
+  public fares!: Fare[];
+
+  @OneToMany(() => Geozone, (geozone: Geozone) => geozone.client)
+  public geozones!: Geozone[];
 }

@@ -1,4 +1,5 @@
-import { Client } from '../../clients/entities/client.entity';
+import { Geozone } from 'src/geozones/entities/geozone.entity';
+import { Client } from 'src/clients/entities/client.entity';
 import { Country } from '../../countries/entities/country.entity';
 import { Region } from '../../regions/entities/region.entity';
 import { Subregion } from '../../subregions/entities/subregion.entity';
@@ -51,6 +52,9 @@ export class City {
 
   @DeleteDateColumn()
   private readonly deletedAt!: Date | null;
+
+  @OneToMany(() => Geozone, (geozone: Geozone) => geozone.country)
+  public geozones!: Geozone[];
 
   @OneToMany(() => Client, (client: Client) => client.city)
   public clients!: Client[];

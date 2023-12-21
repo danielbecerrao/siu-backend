@@ -32,12 +32,26 @@ export class AddressService {
 
   public async findAll(query: PaginateQuery): Promise<Paginated<Address>> {
     return paginate(query, this.addressRepository, {
-      sortableColumns: ['id', 'addressType.name', 'description', 'createdAt'],
+      sortableColumns: [
+        'id',
+        'userId',
+        'addressTypeId',
+        'addressType.name',
+        'description',
+        'createdAt',
+      ],
       nullSort: 'last',
       defaultSortBy: [['id', 'ASC']],
       searchableColumns: ['addressType.name', 'description', 'createdAt'],
       relations: ['addressType'],
-      select: ['id', 'description', 'addressType.name', 'createdAt'],
+      select: [
+        'id',
+        'userId',
+        'addressTypeId',
+        'addressType.name',
+        'description',
+        'createdAt',
+      ],
       filterableColumns: {
         name: [FilterOperator.EQ, FilterSuffix.NOT],
         age: true,
