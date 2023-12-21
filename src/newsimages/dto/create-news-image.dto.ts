@@ -6,5 +6,5 @@ export class CreateNewsImageDto {
   public newsId!: number;
 
   @ApiProperty({ type: 'string', format: 'binary' })
-  public file!: any;
+  public file!: string;
 }

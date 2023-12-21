@@ -17,7 +17,7 @@ import { AddressTypeService } from './addressType.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import type { Address } from './entities/address.entity';
-import type { AddressType } from 'src/addresses/entities/types.entity';
+import type { AddressType } from '../addresses/entities/types.entity';
 import { CheckPolicies } from '../common/decorators/checkPolicies.decorator';
 import type { AppAbility } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/policies.guard';

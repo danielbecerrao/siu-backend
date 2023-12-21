@@ -10,7 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { NewsFilesService } from './newsFiles.service';
 import { CreateNewsFileDto } from './dto/create-news-file.dto';
@@ -29,8 +29,9 @@ export class NewsFilesController {
   public constructor(private readonly newsfilesService: NewsFilesService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
   @CheckPolicies((ability: AppAbility) => ability.can('Create', 'Newsfile'))
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
   public async create(
     @Body() createNewsFileDto: CreateNewsFileDto,
     @UploadedFile() newsFile: Express.Multer.File,
@@ -38,10 +39,12 @@ export class NewsFilesController {
     return this.newsfilesService.create(createNewsFileDto, newsFile);
   }
 
-  @Get()
+  @Get('news/:id')
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Newsfile'))
-  public async findAll(): Promise<NewsFile[]> {
-    return this.newsfilesService.findAll();
+  public async findAllByNewsId(
+    @Param('id') id: string,
+  ): Promise<NewsFile[] | null> {
+    return this.newsfilesService.findByNewsId(+id);
   }
 
   @Get(':id')

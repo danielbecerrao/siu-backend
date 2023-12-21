@@ -39,10 +39,13 @@ export class NewsImagesController {
     return this.newsimagesService.create(createNewsimageDto, file);
   }
 
-  @Get()
+  // obtener todas las imagenes de una noticia
+  @Get('news/:id')
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Newsimage'))
-  public async findAll(): Promise<NewsImage[]> {
-    return this.newsimagesService.findAll();
+  public async findAllByNewsId(
+    @Param('id') id: string,
+  ): Promise<NewsImage[] | null> {
+    return this.newsimagesService.findByNewsId(+id);
   }
 
   @Get(':id')

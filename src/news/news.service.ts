@@ -8,9 +8,9 @@ import { DataSource, Repository } from 'typeorm';
 import type { CreateNewsDto } from './dto/create-news.dto';
 import type { UpdateNewsDto } from './dto/update-news.dto';
 import { News } from './entities/news.entity';
-import { FilesService } from 'src/files/files.service';
-import type { NewsImage } from 'src/newsimages/entities/newsImage.entity';
-import type { NewsFile } from 'src/newsfiles/entities/newsFile.entity';
+import { FilesService } from '../files/files.service';
+import type { NewsImage } from '../newsimages/entities/newsImage.entity';
+import type { NewsFile } from '../newsfiles/entities/newsFile.entity';
 
 @Injectable()
 export class NewsService {

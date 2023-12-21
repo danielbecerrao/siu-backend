@@ -1,4 +1,4 @@
-import { Client } from 'src/clients/entities/client.entity';
+import { Client } from '../../clients/entities/client.entity';
 import { Country } from '../../countries/entities/country.entity';
 import { Region } from '../../regions/entities/region.entity';
 import { Subregion } from '../../subregions/entities/subregion.entity';

@@ -1,7 +1,7 @@
-import { Comment } from 'src/comments/entities/comment.entity';
-import { NewsCategory } from 'src/newscategories/entities/newsCategory.entity';
-import { NewsFile } from 'src/newsfiles/entities/newsFile.entity';
-import { NewsImage } from 'src/newsimages/entities/newsImage.entity';
+import { Comment } from '../../comments/entities/comment.entity';
+import { NewsCategory } from '../../newscategories/entities/newsCategory.entity';
+import { NewsFile } from '../../newsfiles/entities/newsFile.entity';
+import { NewsImage } from '../../newsimages/entities/newsImage.entity';
 import {
   Column,
   CreateDateColumn,

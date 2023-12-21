@@ -8,7 +8,7 @@ import { DataSource, Repository } from 'typeorm';
 import type { CreateCommentDto } from './dto/create-comment.dto';
 import type { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
-import type { User } from 'src/users/entities/user.entity';
+import type { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class CommentsService {

@@ -1,5 +1,5 @@
-import { News } from 'src/news/entities/news.entity';
-import { User } from 'src/users/entities/user.entity';
+import { News } from '../../news/entities/news.entity';
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,

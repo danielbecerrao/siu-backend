@@ -10,7 +10,7 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import type { UpdateUserDto } from './dto/update-user.dto';
 import type { RegisterUserDto } from './dto/register-user.dto';
-import { FilesService } from 'src/files/files.service';
+import { FilesService } from '../files/files.service';
 @Injectable()
 export class UsersService {
   public constructor(

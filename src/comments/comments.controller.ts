@@ -17,8 +17,8 @@ import type { Comment } from './entities/comment.entity';
 import { CheckPolicies } from '../common/decorators/checkPolicies.decorator';
 import type { AppAbility } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/policies.guard';
-import { GetUser } from 'src/common/decorators/user.decorator';
-import { User } from 'src/users/entities/user.entity';
+import { GetUser } from '../common/decorators/user.decorator';
+import { User } from '../users/entities/user.entity';
 
 @Controller('comments')
 @UseGuards(JwtAuthGuard, PoliciesGuard)

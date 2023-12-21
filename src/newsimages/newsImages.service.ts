@@ -8,7 +8,7 @@ import { DataSource, Repository } from 'typeorm';
 import type { CreateNewsImageDto } from './dto/create-news-image.dto';
 import type { UpdateNewsImageDto } from './dto/update-news-image.dto';
 import { NewsImage } from './entities/newsImage.entity';
-import { FilesService } from 'src/files/files.service';
+import { FilesService } from '../files/files.service';
 import * as sharp from 'sharp';
 
 @Injectable()

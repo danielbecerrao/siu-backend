@@ -6,7 +6,7 @@ import { NewsFile } from './entities/newsFile.entity';
 import { CaslModule } from '../casl/casl.module';
 import { NewsFileLog } from './entities/newsFilelog.entity';
 import { NewsFileSubscriber } from './entities/newsFile.subscriber';
-import { FilesModule } from 'src/files/files.module';
+import { FilesModule } from '../files/files.module';
 
 @Module({
   imports: [
