@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import type { AppAbility } from 'src/casl/casl-ability.factory';
 import { CheckPolicies } from 'src/common/decorators/checkPolicies.decorator';
@@ -14,9 +15,15 @@ import { PayService } from 'src/auth/pay.service';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
 import type { Story } from './entities/story.entity';
-import type { StoryInterface } from './interfaces/stories.interface';
+import type { StoryInterface } from './interfaces/story.interface';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { PoliciesGuard } from 'src/casl/policies.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('stories')
+@UseGuards(JwtAuthGuard, PoliciesGuard)
+@ApiTags('Historias')
+@ApiBearerAuth()
 export class StoriesController {
   public constructor(
     private readonly storiesService: StoriesService,

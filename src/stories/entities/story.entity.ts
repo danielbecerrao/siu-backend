@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
 } from 'typeorm';
-@Entity()
+@Entity('stories')
 export class Story {
   @PrimaryGeneratedColumn()
   public id!: number;
