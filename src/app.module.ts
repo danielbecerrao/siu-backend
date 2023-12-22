@@ -39,10 +39,11 @@ import { RoutesModule } from './routes/routes.module';
 import { FaresModule } from './fares/fares.module';
 import { GeozonesModule } from './geozones/geozones.module';
 import { StoriesModule } from './stories/stories.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
-    CommentsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm],
@@ -56,12 +57,17 @@ import { StoriesModule } from './stories/stories.module';
       global: true,
       middleware: { mount: true },
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
+      exclude: ['/api*'],
+    }),
     ActionsModule,
     AddressModule,
     AuthModule,
     CaslModule,
     CitiesModule,
     ClientsModule,
+    CommentsModule,
     CountriesModule,
     FilesModule,
     IdentificationtypesModule,
