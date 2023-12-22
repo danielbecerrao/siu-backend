@@ -15,7 +15,7 @@ import type {
   RouteDetailInterface,
 } from 'src/routes/interfaces/route.interface';
 import type { GeozoneInterface } from 'src/geozones/interfaces/geozone.interface';
-import type { StoryInterface } from 'src/stories/interfaces/stories.interface';
+import type { StoryInterface } from 'src/stories/interfaces/story.interface';
 
 config({ path: '.env' });
 
