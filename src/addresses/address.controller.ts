@@ -48,6 +48,15 @@ export class AddressController {
     return this.addressService.findAll(query);
   }
 
+  @Get('user/:userId')
+  @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Address'))
+  public async findByUserId(
+    @Paginate() query: PaginateQuery,
+    @Param('userId') userId: string,
+  ): Promise<Paginated<Address>> {
+    return this.addressService.findByUserId(+userId, query);
+  }
+
   @Get('types')
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Address'))
   public async findTypes(): Promise<AddressType[]> {

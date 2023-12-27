@@ -63,6 +63,42 @@ export class AddressService {
     return this.addressRepository.findOneBy({ id });
   }
 
+  public async findByUserId(
+    userId: number,
+    query: PaginateQuery,
+  ): Promise<Paginated<Address>> {
+    const dataByUserId = this.addressRepository
+      .createQueryBuilder()
+      .where({ userId });
+
+    return paginate(query, dataByUserId, {
+      sortableColumns: [
+        'id',
+        'userId',
+        'addressTypeId',
+        'addressType.name',
+        'description',
+        'createdAt',
+      ],
+      nullSort: 'last',
+      defaultSortBy: [['id', 'ASC']],
+      searchableColumns: ['addressType.name', 'description', 'createdAt'],
+      relations: ['addressType'],
+      select: [
+        'id',
+        'userId',
+        'addressTypeId',
+        'addressType.name',
+        'description',
+        'createdAt',
+      ],
+      filterableColumns: {
+        name: [FilterOperator.EQ, FilterSuffix.NOT],
+        age: true,
+      },
+    });
+  }
+
   public async update(
     id: number,
     updateAddressDto: UpdateAddressDto,
