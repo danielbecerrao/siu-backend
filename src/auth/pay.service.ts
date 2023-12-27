@@ -33,7 +33,7 @@ export class PayService {
   ) {}
 
   public async payLogin(): Promise<ApiPayResponse> {
-    const url: string = `${credentials.url}/auth/login`;
+    const url: string = `${credentials.url}/auth/LOGIN/MOBILE`;
     const requestBody = {
       user: credentials.username,
       pass: credentials.password,
