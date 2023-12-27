@@ -216,7 +216,7 @@ export class PayService {
 
   //HISTORIAS
   public async getAllStories(accessToken: string): Promise<StoryInterface> {
-    const url: string = `${credentials.url}/STORY/MOBILE/`;
+    const url: string = `${credentials.url}/STORY`;
     const { data } = await firstValueFrom(
       this.httpService
         .get<StoryInterface>(url, {
@@ -237,7 +237,8 @@ export class PayService {
     accessToken: string,
     person_profile_id: number,
   ): Promise<StoryInterface> {
-    const url: string = `${credentials.url}/STORY/MOBILE/`;
+    const url: string = `${credentials.url}/STORY/MOBILE`;
+    console.log(url, person_profile_id, accessToken);
     const requestBody = {
       person_profile_id: person_profile_id,
     };
