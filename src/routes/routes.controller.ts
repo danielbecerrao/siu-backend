@@ -44,12 +44,12 @@ export class RoutesController {
   public async findAll(): Promise<RouteInterface> {
     try {
       const apiResponse = await this.payService.payLogin();
-      const token: string = apiResponse.accessToken;
+      const token: string = apiResponse.data.ACCESS_TOCKEN;
       const routes: RouteInterface = await this.payService.getAllRoutes(token);
 
       return routes;
     } catch (error) {
-      throw new Error(`Error when trying to obtain fares data: ${error}`);
+      throw new Error(`Error when trying to obtain routes data: ${error}`);
     }
   }
 
@@ -58,7 +58,7 @@ export class RoutesController {
   public async findOne(@Param('id') id: string): Promise<RouteInterface> {
     try {
       const apiResponse = await this.payService.payLogin();
-      const token: string = apiResponse.accessToken;
+      const token: string = apiResponse.data.ACCESS_TOCKEN;
       const route: RouteInterface = await this.payService.getOneRoute(
         +id,
         token,
@@ -66,7 +66,7 @@ export class RoutesController {
 
       return route;
     } catch (error) {
-      throw new Error(`Error when trying to obtain fares data: ${error}`);
+      throw new Error(`Error when trying to obtain routes data: ${error}`);
     }
   }
 
@@ -77,13 +77,13 @@ export class RoutesController {
   ): Promise<RouteDetailInterface> {
     try {
       const apiResponse = await this.payService.payLogin();
-      const token: string = apiResponse.accessToken;
+      const token: string = apiResponse.data.ACCESS_TOCKEN;
       const routeDetail: RouteDetailInterface =
         await this.payService.getOneRouteDetail(+id, token);
 
       return routeDetail;
     } catch (error) {
-      throw new Error(`Error when trying to obtain fares data: ${error}`);
+      throw new Error(`Error when trying to obtain routes data: ${error}`);
     }
   }
 

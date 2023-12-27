@@ -43,7 +43,7 @@ export class GeozonesController {
   public async findAll(): Promise<GeozoneInterface> {
     try {
       const apiResponse = await this.payService.payLogin();
-      const token: string = apiResponse.accessToken;
+      const token: string = apiResponse.data.ACCESS_TOCKEN;
       const routes: GeozoneInterface =
         await this.payService.getAllGeozones(token);
 
@@ -58,7 +58,7 @@ export class GeozonesController {
   public async findOne(@Param('id') id: string): Promise<GeozoneInterface> {
     try {
       const apiResponse = await this.payService.payLogin();
-      const token: string = apiResponse.accessToken;
+      const token: string = apiResponse.data.ACCESS_TOCKEN;
       const route: GeozoneInterface = await this.payService.getOneGeozone(
         +id,
         token,

@@ -1,7 +1,5 @@
 export interface ApiPayResponse {
-  auth: boolean;
-  user: object;
-  TFac: number;
-  accessToken: string;
-  refreshToken: string;
+  data: {
+    ACCESS_TOCKEN: string;
+  };
 }

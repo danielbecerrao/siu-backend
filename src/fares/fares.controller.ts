@@ -41,7 +41,7 @@ export class FaresController {
   public async findAll(): Promise<FareInterface> {
     try {
       const apiResponse = await this.payService.payLogin();
-      const token: string = apiResponse.accessToken;
+      const token: string = apiResponse.data.ACCESS_TOCKEN;
       const fares: FareInterface = await this.payService.getAllFares(token);
 
       return fares;
@@ -55,7 +55,7 @@ export class FaresController {
   public async findOne(@Param('id') id: string): Promise<FareInterface | null> {
     try {
       const apiResponse = await this.payService.payLogin();
-      const token: string = apiResponse.accessToken;
+      const token: string = apiResponse.data.ACCESS_TOCKEN;
       const fare: FareInterface = await this.payService.getOneFare(+id, token);
 
       return fare;
