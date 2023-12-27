@@ -238,7 +238,7 @@ export class PayService {
     person_profile_id: number,
   ): Promise<StoryInterface> {
     const url: string = `${credentials.url}/STORY/MOBILE`;
-    console.log(url, person_profile_id, accessToken);
+
     const requestBody = {
       person_profile_id: person_profile_id,
     };
