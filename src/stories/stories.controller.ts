@@ -41,9 +41,29 @@ export class StoriesController {
   public async findAll(): Promise<StoryInterface> {
     try {
       const apiResponse = await this.payService.payLogin();
-      const token: string = apiResponse.accessToken;
+      const token: string = apiResponse.data.ACCESS_TOCKEN;
       const stories: StoryInterface =
         await this.payService.getAllStories(token);
+
+      return stories;
+    } catch (error) {
+      throw new Error(`Error when trying to obtain stories data: ${error}`);
+    }
+  }
+
+  @Post('person_profile')
+  @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Story'))
+  public async findAllByPersonProfile(
+    @Body() person_profile_id: number,
+  ): Promise<StoryInterface> {
+    try {
+      const apiResponse = await this.payService.payLogin();
+      const token: string = apiResponse.data.ACCESS_TOCKEN;
+      const stories: StoryInterface =
+        await this.payService.getAllStoriesByPersonProfile(
+          token,
+          person_profile_id,
+        );
 
       return stories;
     } catch (error) {
@@ -56,7 +76,7 @@ export class StoriesController {
   public async findOne(@Param('id') id: string): Promise<StoryInterface> {
     try {
       const apiResponse = await this.payService.payLogin();
-      const token: string = apiResponse.accessToken;
+      const token: string = apiResponse.data.ACCESS_TOCKEN;
       const story: StoryInterface = await this.payService.getOneStory(
         +id,
         token,

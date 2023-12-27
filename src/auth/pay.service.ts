@@ -233,6 +233,31 @@ export class PayService {
     return data;
   }
 
+  public async getAllStoriesByPersonProfile(
+    accessToken: string,
+    person_profile_id: number,
+  ): Promise<StoryInterface> {
+    const url: string = `${credentials.url}/STORY/MOBILE`;
+
+    const requestBody = {
+      person_profile_id: person_profile_id,
+    };
+    const { data } = await firstValueFrom(
+      this.httpService
+        .post<StoryInterface>(url, requestBody, {
+          headers: {
+            authorization: 'Bearer ' + accessToken,
+          },
+        })
+        .pipe(
+          catchError((error: AxiosError) => {
+            throw new BadRequestException(error);
+          }),
+        ),
+    );
+    return data;
+  }
+
   public async getOneStory(
     id: number,
     accessToken: string,
