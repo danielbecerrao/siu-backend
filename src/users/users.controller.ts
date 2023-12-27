@@ -23,6 +23,7 @@ import { PoliciesGuard } from '../casl/policies.guard';
 import { GetUser } from '../common/decorators/user.decorator';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import type { UpdateResult } from 'typeorm';
 
 @Controller('users')
 @ApiTags('Usuarios')
@@ -35,7 +36,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can('Create', 'User'))
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('profilePicture'))
+  @UseInterceptors(FileInterceptor('profilePictureFile'))
   public async create(
     @Body() createUserDto: CreateUserDto,
     @UploadedFile() profilePictureFile?: Express.Multer.File,
@@ -44,8 +45,8 @@ export class UsersController {
   }
 
   @Post('register')
-  @UseInterceptors(FileInterceptor('profilePictureFile'))
   @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('profilePictureFile'))
   public async register(
     @Body() registerUserDto: RegisterUserDto,
     @UploadedFile() profilePictureFile?: Express.Multer.File,
@@ -71,8 +72,8 @@ export class UsersController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @ApiBearerAuth()
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'User'))
+  @ApiBearerAuth()
   public async findOne(@Param('id') id: string): Promise<User | null> {
     return this.usersService.findOne(+id);
   }
@@ -80,12 +81,15 @@ export class UsersController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('profilePictureFile'))
   @CheckPolicies((ability: AppAbility) => ability.can('Update', 'User'))
   public async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    return this.usersService.update(+id, updateUserDto);
+    @UploadedFile() profilePictureFile?: Express.Multer.File,
+  ): Promise<UpdateResult> {
+    return this.usersService.update(+id, updateUserDto, profilePictureFile);
   }
 
   @Patch('self')
@@ -95,7 +99,7 @@ export class UsersController {
   public async selfUpdate(
     @Body() updateUserDto: UpdateUserDto,
     @GetUser() user: User,
-  ): Promise<User> {
+  ): Promise<UpdateResult> {
     return this.usersService.selfUpdate(updateUserDto, user);
   }
 

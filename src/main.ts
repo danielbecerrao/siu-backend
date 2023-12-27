@@ -22,15 +22,20 @@ async function bootstrap(): Promise<void> {
     .addBearerAuth()
     .build();
   const options: SwaggerCustomOptions = {
+    customSiteTitle: 'SIU',
     customJsStr: `
     const img = document.createElement("img");
     img.src = "./logo.png";
     img.style.width = "100px";
     img.style.height = "30px";
     const elementInterval = setInterval(function(){
-      const element = document.querySelector(".topbar-wrapper a");
-      if(element){
-        element.appendChild(img);
+      const topbar = document.querySelector(".topbar-wrapper a");
+      const opblock = document.getElementsByClassName("opblock-tag-section");
+      if(topbar && opblock){
+        Array.from(opblock).forEach((element) => {
+          element.classList.remove("is-open");
+        });
+        topbar.appendChild(img);
         clearInterval(elementInterval);
       }
     }, 100);

@@ -12,6 +12,7 @@ import { RefreshJwtStrategy } from './strategies/refresh-token.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 import { AuthLog } from './entities/authlog.entity';
+import { FilesModule } from '../files/files.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthLog } from './entities/authlog.entity';
     UsersModule,
     HttpModule,
     PassportModule,
+    FilesModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({

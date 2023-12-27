@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { UpdateResult } from 'typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -62,6 +63,7 @@ export class UsersService {
           newUser.id,
         );
         user.profilePicture = profilePictureFile.originalname;
+        await queryRunner.manager.save(user);
       }
       await queryRunner.commitTransaction();
       return newUser;
@@ -112,27 +114,61 @@ export class UsersService {
       .getOneOrFail();
   }
 
-  public async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  public async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+    profilePictureFile?: Express.Multer.File,
+  ): Promise<UpdateResult> {
     const user: User | null = await this.findOne(id);
     if (!user)
       throw new NotFoundException('Error al actualizar el usuario', {
         cause: new Error(),
         description: 'Usuario no encontrado por id',
       });
+    if (updateUserDto.username && user.username !== updateUserDto.username) {
+      const existUser = await this.findOneByUsername(updateUserDto.username);
+      if (existUser)
+        throw new ConflictException('Error al actualizar usuario', {
+          cause: new Error(),
+          description: 'Ya existe un usuario con este username',
+        });
+    }
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      return await this.userRepository.save({ id, ...updateUserDto });
+      const newUser: UpdateResult = await queryRunner.manager.update(User, id, {
+        ...updateUserDto,
+      });
+      if (profilePictureFile) {
+        await this.filesService.upload(
+          profilePictureFile.buffer,
+          profilePictureFile.originalname,
+          'img_users',
+          id,
+        );
+        user.profilePicture = profilePictureFile.originalname;
+        await queryRunner.manager.update(User, id, {
+          ...updateUserDto,
+        });
+      }
+      await queryRunner.commitTransaction();
+      return newUser;
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException('Error al actualizar Usuario', {
         cause: new Error(),
         description: `Ocurrió un error en el servidor: ${error}`,
       });
+    } finally {
+      await queryRunner.release();
     }
   }
 
   public async selfUpdate(
     updateUserDto: UpdateUserDto,
     user: User,
-  ): Promise<User> {
+  ): Promise<UpdateResult> {
     return this.update(user.id, updateUserDto);
   }
 

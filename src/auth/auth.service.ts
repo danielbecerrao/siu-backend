@@ -8,7 +8,7 @@ import type { Payload } from './interfaces/payload.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthLog } from './entities/authlog.entity';
 import { Repository } from 'typeorm';
-import { HttpService } from '@nestjs/axios';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class AuthService {
@@ -16,8 +16,8 @@ export class AuthService {
     @InjectRepository(AuthLog)
     private readonly authLogsRepository: Repository<AuthLog>,
     private readonly usersService: UsersService,
-    private readonly httpService: HttpService,
     private readonly jwtService: JwtService,
+    private readonly filesService: FilesService,
   ) {}
 
   public async validateUser(
@@ -36,6 +36,11 @@ export class AuthService {
   }
 
   public async login(user: User): Promise<AccessToken> {
+    user['profilePictureUrl'] = await this.filesService.getPresignedUrl(
+      'img_users',
+      user.profilePicture,
+      user.id,
+    );
     const payload: Payload = { id: user.id, username: user.username };
     return {
       user,
