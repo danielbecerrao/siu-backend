@@ -101,11 +101,11 @@ export class PayService {
   }
 
   //ROUTES
-  public async getAllRoutes(accessToken: string): Promise<RouteInterface> {
+  public async getAllRoutes(accessToken: string): Promise<RouteInterface[]> {
     const url: string = `${credentials.url}/ROUTE`;
     const { data } = await firstValueFrom(
       this.httpService
-        .get<RouteInterface>(url, {
+        .get<RouteInterface[]>(url, {
           headers: {
             authorization: 'Bearer ' + accessToken,
           },
@@ -238,13 +238,9 @@ export class PayService {
     person_profile_id: number,
   ): Promise<StoryInterface> {
     const url: string = `${credentials.url}/STORY/MOBILE`;
-
-    const requestBody = {
-      person_profile_id: person_profile_id,
-    };
     const { data } = await firstValueFrom(
       this.httpService
-        .post<StoryInterface>(url, requestBody, {
+        .post<StoryInterface>(url, person_profile_id, {
           headers: {
             authorization: 'Bearer ' + accessToken,
           },
