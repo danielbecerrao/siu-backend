@@ -9,6 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RoutesService } from './routes.service';
+import { ClientsService } from 'src/clients/clients.service';
+import { UsersService } from 'src/users/users.service';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -17,11 +19,14 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CheckPolicies } from 'src/common/decorators/checkPolicies.decorator';
 import type { AppAbility } from 'src/casl/casl-ability.factory';
 import type { Route } from './entities/route.entity';
+import { User } from 'src/users/entities/user.entity';
 import type {
   RouteInterface,
   RouteDetailInterface,
 } from './interfaces/route.interface';
 import { PayService } from 'src/auth/pay.service';
+import { GetUser } from 'src/common/decorators/user.decorator';
+import { RoutesData } from './data/routes.data';
 
 @Controller('routes')
 @UseGuards(JwtAuthGuard, PoliciesGuard)
@@ -31,6 +36,8 @@ export class RoutesController {
   public constructor(
     private readonly routesService: RoutesService,
     private readonly payService: PayService,
+    private readonly clientsService: ClientsService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Post()
@@ -41,13 +48,43 @@ export class RoutesController {
 
   @Get()
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Route'))
-  public async findAll(): Promise<RouteInterface> {
+  public async findAll(): Promise<RouteInterface[]> {
+    const routes: RouteInterface[] = RoutesData;
+    try {
+      return routes;
+    } catch (error) {
+      throw new Error(`Error when trying to obtain routes data: ${error}`);
+    }
+  }
+
+  @Get('client')
+  @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Route'))
+  public async findRoutesByClient(
+    @GetUser() user: User,
+  ): Promise<RouteInterface[]> {
+    console.log(user.id);
+    const userId = user.id;
+    const data: RouteInterface[] = [];
+
     try {
       const apiResponse = await this.payService.payLogin();
       const token: string = apiResponse.data.ACCESS_TOCKEN;
-      const routes: RouteInterface = await this.payService.getAllRoutes(token);
+      const routes: RouteInterface[] =
+        await this.payService.getAllRoutes(token);
+      const user: User | null = await this.usersService.findOne(userId);
 
-      return routes;
+      if (user) {
+        const client = await this.clientsService.findOne(user.clientId);
+        if (client) {
+          routes.forEach((route) => {
+            if (route.CLIENT_NAME.toLowerCase() === client.name.toLowerCase()) {
+              data.push(route);
+            }
+          });
+        }
+      }
+
+      return data;
     } catch (error) {
       throw new Error(`Error when trying to obtain routes data: ${error}`);
     }

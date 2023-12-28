@@ -1,26 +1,20 @@
 export interface RouteInterface {
-  ID: number;
+  ROUTE_ID: number;
+  ROUTE_NAME: string;
+  DATE: string;
+  FREQUENCY: string;
+  START_HOUR: string;
+  END_HOUR: string;
   CLIENT_ID: number;
-  ROUTE_TYPE_ID: number;
-  ROUTE_GROUP_ID: number;
-  ROUTE_GEO_ZONE_ID: number;
-  CODE: string;
-  NAME: string;
-  SHORT_NAME: string;
-  DESCRIPTION: string;
-  IS_ACTIVE: number;
-  INITIAL_POINT: number;
-  FINAL_POINT: number;
-  TRIP_DURATION: number;
-  TOTAL_KM: string;
-  COURSE: number;
-  COLOR: string;
-  TEXT_COLOR: string;
-  ORDER: number;
-  CREATED_AT: Date;
-  CREATED_BY: string;
-  UPDATED_AT: Date;
-  UPDATED_BY: string;
+  CLIENT_NAME: string;
+  TRIPS: Array<{
+    TRIP_ID: number;
+    TRIP_NAME: string;
+    THEORIC_START_HOUR: string;
+    THEORIC_END_HOUR: string;
+    VEHICLE_ID: number;
+    DRIVER_ID: number;
+  }>;
 }
 
 export interface RouteDetailInterface {
