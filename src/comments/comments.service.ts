@@ -9,6 +9,7 @@ import type { CreateCommentDto } from './dto/create-comment.dto';
 import type { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import type { User } from '../users/entities/user.entity';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class CommentsService {
@@ -16,6 +17,7 @@ export class CommentsService {
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
     private readonly dataSource: DataSource,
+    private readonly filesService: FilesService,
   ) {}
   public async create(
     createCommentDto: CreateCommentDto,
@@ -46,7 +48,18 @@ export class CommentsService {
       .findTrees({
         relations: ['user', 'news'],
       });
-    return comments.filter((comment: Comment) => comment.newsId === id);
+    const commentsFiltered = comments.filter(
+      (comment: Comment) => comment.newsId === id,
+    );
+    for await (const comment of commentsFiltered) {
+      comment.user['profilePictureUrl'] =
+        await this.filesService.getPresignedUrl(
+          'img_users',
+          comment.user['profilePicture'],
+          comment.user.id,
+        );
+    }
+    return commentsFiltered;
   }
 
   private async findOne(id: number): Promise<Comment | null> {
