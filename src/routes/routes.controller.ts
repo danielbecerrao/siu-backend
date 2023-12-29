@@ -90,6 +90,23 @@ export class RoutesController {
     }
   }
 
+  @Get('detail')
+  @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Route'))
+  public async findOneRouteDetail(
+    @Param('id') id: string,
+  ): Promise<RouteDetailInterface> {
+    try {
+      const apiResponse = await this.payService.payLogin();
+      const token: string = apiResponse.data.ACCESS_TOCKEN;
+      const routeDetail: RouteDetailInterface =
+        await this.payService.getOneRouteDetail(+id, token);
+
+      return routeDetail;
+    } catch (error) {
+      throw new Error(`Error when trying to obtain routes data: ${error}`);
+    }
+  }
+
   @Get(':id')
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Route'))
   public async findOne(@Param('id') id: string): Promise<RouteInterface> {
@@ -102,23 +119,6 @@ export class RoutesController {
       );
 
       return route;
-    } catch (error) {
-      throw new Error(`Error when trying to obtain routes data: ${error}`);
-    }
-  }
-
-  @Get('detail/:id')
-  @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Route'))
-  public async findOneRouteDetail(
-    @Param('id') id: string,
-  ): Promise<RouteDetailInterface> {
-    try {
-      const apiResponse = await this.payService.payLogin();
-      const token: string = apiResponse.data.ACCESS_TOCKEN;
-      const routeDetail: RouteDetailInterface =
-        await this.payService.getOneRouteDetail(+id, token);
-
-      return routeDetail;
     } catch (error) {
       throw new Error(`Error when trying to obtain routes data: ${error}`);
     }

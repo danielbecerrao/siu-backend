@@ -150,7 +150,7 @@ export class PayService {
     id: number,
     accessToken: string,
   ): Promise<RouteDetailInterface> {
-    const url: string = `${credentials.url}/ROUTE_DETAIL/BY_ROUTE_ID/${id}`;
+    const url: string = `${credentials.url}/ROUTE/ALL/DETAIL`;
     const { data } = await firstValueFrom(
       this.httpService
         .get<RouteDetailInterface>(url, {
