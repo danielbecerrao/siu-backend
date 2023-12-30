@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { UpdateResult } from 'typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -118,7 +117,7 @@ export class UsersService {
     id: number,
     updateUserDto: UpdateUserDto,
     profilePictureFile?: Express.Multer.File,
-  ): Promise<UpdateResult> {
+  ): Promise<User | null> {
     const user: User | null = await this.findOne(id);
     if (!user)
       throw new NotFoundException('Error al actualizar el usuario', {
@@ -137,7 +136,7 @@ export class UsersService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const newUser: UpdateResult = await queryRunner.manager.update(User, id, {
+      await queryRunner.manager.update(User, id, {
         ...updateUserDto,
       });
       if (profilePictureFile) {
@@ -148,12 +147,10 @@ export class UsersService {
           id,
         );
         user.profilePicture = profilePictureFile.originalname;
-        await queryRunner.manager.update(User, id, {
-          ...updateUserDto,
-        });
+        await queryRunner.manager.update(User, id, user);
       }
       await queryRunner.commitTransaction();
-      return newUser;
+      return this.findOne(id);
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException('Error al actualizar Usuario', {
@@ -168,8 +165,9 @@ export class UsersService {
   public async selfUpdate(
     updateUserDto: UpdateUserDto,
     user: User,
-  ): Promise<UpdateResult> {
-    return this.update(user.id, updateUserDto);
+    profilePictureFile?: Express.Multer.File,
+  ): Promise<User | null> {
+    return this.update(user.id, updateUserDto, profilePictureFile);
   }
 
   public async register(

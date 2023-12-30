@@ -42,22 +42,30 @@ export class CommentsService {
     }
   }
 
+  private async addProfileImage(comment: Comment): Promise<void> {
+    comment.user['profilePictureUrl'] = await this.filesService.getPresignedUrl(
+      'img_users',
+      comment.user.profilePicture,
+      comment.user.id,
+    );
+    if (comment.children.length > 0) {
+      for (const child of comment.children) {
+        await this.addProfileImage(child);
+      }
+    }
+  }
+
   public async findAllByNewsId(id: number): Promise<Comment[]> {
     const comments: Comment[] = await this.dataSource.manager
       .getTreeRepository(Comment)
       .findTrees({
-        relations: ['user', 'news'],
+        relations: ['user'],
       });
     const commentsFiltered = comments.filter(
       (comment: Comment) => comment.newsId === id,
     );
     for await (const comment of commentsFiltered) {
-      comment.user['profilePictureUrl'] =
-        await this.filesService.getPresignedUrl(
-          'img_users',
-          comment.user['profilePicture'],
-          comment.user.id,
-        );
+      await this.addProfileImage(comment);
     }
     return commentsFiltered;
   }

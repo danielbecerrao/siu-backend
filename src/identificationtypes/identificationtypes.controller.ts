@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -17,6 +18,7 @@ import type { IdentificationType } from './entities/identificationtype.entity';
 import { CheckPolicies } from '../common/decorators/checkPolicies.decorator';
 import type { AppAbility } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/policies.guard';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('identificationtypes')
 @ApiTags('Tipos de identificación')
@@ -38,6 +40,7 @@ export class IdentificationtypesController {
   }
 
   @Get()
+  @UseInterceptors(CacheInterceptor)
   public async findAll(): Promise<IdentificationType[]> {
     return this.identificationtypesService.findAll();
   }

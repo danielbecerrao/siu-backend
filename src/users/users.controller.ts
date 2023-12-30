@@ -23,7 +23,6 @@ import { PoliciesGuard } from '../casl/policies.guard';
 import { GetUser } from '../common/decorators/user.decorator';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import type { UpdateResult } from 'typeorm';
 
 @Controller('users')
 @ApiTags('Usuarios')
@@ -88,19 +87,25 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
     @UploadedFile() profilePictureFile?: Express.Multer.File,
-  ): Promise<UpdateResult> {
+  ): Promise<User | null> {
     return this.usersService.update(+id, updateUserDto, profilePictureFile);
   }
 
   @Patch('self')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
   @CheckPolicies((ability: AppAbility) => ability.can('Update', 'User'))
   public async selfUpdate(
     @Body() updateUserDto: UpdateUserDto,
     @GetUser() user: User,
-  ): Promise<UpdateResult> {
-    return this.usersService.selfUpdate(updateUserDto, user);
+    @UploadedFile() profilePictureFile?: Express.Multer.File,
+  ): Promise<User | null> {
+    return this.usersService.selfUpdate(
+      updateUserDto,
+      user,
+      profilePictureFile,
+    );
   }
 
   @Delete(':id')

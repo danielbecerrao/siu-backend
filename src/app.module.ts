@@ -41,6 +41,7 @@ import { GeozonesModule } from './geozones/geozones.module';
 import { StoriesModule } from './stories/stories.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -64,6 +65,11 @@ import { join } from 'path';
     ActionsModule,
     AddressModule,
     AuthModule,
+    CacheModule.register({
+      ttl: 50000,
+      max: 100,
+      isGlobal: true,
+    }),
     CaslModule,
     CitiesModule,
     ClientsModule,
