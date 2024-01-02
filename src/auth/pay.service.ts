@@ -101,11 +101,11 @@ export class PayService {
   }
 
   //ROUTES
-  public async getAllRoutes(accessToken: string): Promise<RouteInterface[]> {
+  public async getAllRoutes(accessToken: string): Promise<RouteInterface> {
     const url: string = `${credentials.url}/ROUTE`;
     const { data } = await firstValueFrom(
       this.httpService
-        .get<RouteInterface[]>(url, {
+        .get<RouteInterface>(url, {
           headers: {
             authorization: 'Bearer ' + accessToken,
           },
@@ -133,7 +133,9 @@ export class PayService {
         })
         .pipe(
           catchError((error: AxiosError) => {
-            throw new BadRequestException(error);
+            throw `An error happened. Msg: ${JSON.stringify(
+              error.response?.data,
+            )}`;
           }),
         ),
     );
@@ -147,7 +149,6 @@ export class PayService {
   }
 
   public async getOneRouteDetail(
-    id: number,
     accessToken: string,
   ): Promise<RouteDetailInterface> {
     const url: string = `${credentials.url}/ROUTE/ALL/DETAIL`;

@@ -1,4 +1,13 @@
-export interface RouteInterface {
+export interface Trip {
+  TRIP_ID: number;
+  TRIP_NAME: string;
+  THEORIC_START_HOUR: string;
+  THEORIC_END_HOUR: string;
+  VEHICLE_ID: number;
+  DRIVER_ID: number;
+}
+
+export interface Route {
   ROUTE_ID: number;
   ROUTE_NAME: string;
   DATE: string;
@@ -7,14 +16,12 @@ export interface RouteInterface {
   END_HOUR: string;
   CLIENT_ID: number;
   CLIENT_NAME: string;
-  TRIPS: Array<{
-    TRIP_ID: number;
-    TRIP_NAME: string;
-    THEORIC_START_HOUR: string;
-    THEORIC_END_HOUR: string;
-    VEHICLE_ID: number;
-    DRIVER_ID: number;
-  }>;
+  TRIPS: Trip[];
+}
+
+export interface RouteInterface {
+  success: boolean;
+  data: Route[];
 }
 
 export interface RouteDetailInterface {

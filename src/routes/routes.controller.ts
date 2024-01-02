@@ -48,8 +48,8 @@ export class RoutesController {
 
   @Get()
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Route'))
-  public async findAll(): Promise<RouteInterface[]> {
-    const routes: RouteInterface[] = RoutesData;
+  public async findAll(): Promise<RouteInterface> {
+    const routes: RouteInterface = RoutesData;
     try {
       return routes;
     } catch (error) {
@@ -62,29 +62,28 @@ export class RoutesController {
   public async findRoutesByClient(
     @GetUser() user: User,
   ): Promise<RouteInterface[]> {
-    console.log(user.id);
     const userId = user.id;
-    const data: RouteInterface[] = [];
+    const route: RouteInterface[] = [];
 
     try {
-      const apiResponse = await this.payService.payLogin();
-      const token: string = apiResponse.data.ACCESS_TOCKEN;
-      const routes: RouteInterface[] =
-        await this.payService.getAllRoutes(token);
+      const routes = RoutesData.data;
       const user: User | null = await this.usersService.findOne(userId);
 
       if (user) {
         const client = await this.clientsService.findOne(user.clientId);
         if (client) {
-          routes.forEach((route) => {
-            if (route.CLIENT_NAME.toLowerCase() === client.name.toLowerCase()) {
-              data.push(route);
-            }
+          const data = routes.filter(
+            (data) =>
+              data.CLIENT_NAME.toLowerCase() === client.name.toLowerCase(),
+          );
+          route.push({
+            success: true,
+            data: data,
           });
         }
       }
 
-      return data;
+      return route;
     } catch (error) {
       throw new Error(`Error when trying to obtain routes data: ${error}`);
     }
@@ -92,14 +91,12 @@ export class RoutesController {
 
   @Get('detail')
   @CheckPolicies((ability: AppAbility) => ability.can('Read', 'Route'))
-  public async findOneRouteDetail(
-    @Param('id') id: string,
-  ): Promise<RouteDetailInterface> {
+  public async findOneRouteDetail(): Promise<RouteDetailInterface> {
     try {
       const apiResponse = await this.payService.payLogin();
       const token: string = apiResponse.data.ACCESS_TOCKEN;
       const routeDetail: RouteDetailInterface =
-        await this.payService.getOneRouteDetail(+id, token);
+        await this.payService.getOneRouteDetail(token);
 
       return routeDetail;
     } catch (error) {
