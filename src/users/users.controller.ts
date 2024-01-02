@@ -76,21 +76,6 @@ export class UsersController {
   public async findOne(@Param('id') id: string): Promise<User | null> {
     return this.usersService.findOne(+id);
   }
-
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @ApiBearerAuth()
-  @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('profilePictureFile'))
-  @CheckPolicies((ability: AppAbility) => ability.can('Update', 'User'))
-  public async update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-    @UploadedFile() profilePictureFile?: Express.Multer.File,
-  ): Promise<User | null> {
-    return this.usersService.update(+id, updateUserDto, profilePictureFile);
-  }
-
   @Patch('self')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @ApiBearerAuth()
@@ -106,6 +91,20 @@ export class UsersController {
       user,
       profilePictureFile,
     );
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('profilePictureFile'))
+  @CheckPolicies((ability: AppAbility) => ability.can('Update', 'User'))
+  public async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile() profilePictureFile?: Express.Multer.File,
+  ): Promise<User | null> {
+    return this.usersService.update(+id, updateUserDto, profilePictureFile);
   }
 
   @Delete(':id')
