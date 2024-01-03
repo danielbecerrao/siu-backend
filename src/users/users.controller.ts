@@ -80,6 +80,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('profilePictureFile'))
   @CheckPolicies((ability: AppAbility) => ability.can('Update', 'User'))
   public async selfUpdate(
     @Body() updateUserDto: UpdateUserDto,
