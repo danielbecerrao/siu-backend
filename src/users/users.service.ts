@@ -146,8 +146,9 @@ export class UsersService {
           'img_users',
           id,
         );
-        user.profilePicture = profilePictureFile.originalname;
-        await queryRunner.manager.update(User, id, user);
+        await queryRunner.manager.update(User, id, {
+          profilePicture: profilePictureFile.originalname,
+        });
       }
       await queryRunner.commitTransaction();
       return this.findOne(id);
